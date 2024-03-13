@@ -1,6 +1,36 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const productsController = require('../controllers/products');
-router.get('/products', productsController.getProducts);
-router.get('/products/filters', productsController.getFilters);
+const product = require('../controllers/product');
+
+// Import verifyToken function
+const verifyToken = require("../config/jwt");
+
+// admin routes
+
+router.post("/admin/product", verifyToken, product.createProduct);
+router.get("/admin/products", verifyToken, product.GetAllProductsForAdmin);
+router.get(
+  "/admin/product/:slug",
+  verifyToken,
+  product.getOneProductBySlug
+);
+router.put(
+  "/admin/product/:slug",
+  verifyToken,
+  product.updateProductBySlug
+);
+
+router.delete(
+  "/admin/product/:slug",
+  verifyToken,
+  product.deletedProductBySlug
+);
+
+// user routes
+// Define your routes here
+router.get('/products', product.getProducts);
+router.get('/products/filters', product.getFilters);
+router.get("/filters/:category", product.getFiltersByCategory);
+router.get("/product/:slug", product.getOneProductBySlug);
+
 module.exports = router;

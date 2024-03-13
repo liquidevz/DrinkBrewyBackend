@@ -35,10 +35,10 @@ const homeRoutes = require('./routes/home');
 const productsRoutes = require('./routes/products');
 const userRoutes = require('./routes/user');
 const brandRoutes = require('./routes/brand');
-const categoryRoutes = require('./routes/categories');
-const subcategoryRoutes = require('./routes/subcategories');
+const categoryRoutes = require('./routes/category');
+const subcategoryRoutes = require('./routes/subcategory');
 const newsletterRoutes = require('./routes/newsletter');
-const productRoutes = require('./routes/product');
+const productRoutes = require('./routes/products');
 
 
 app.use('/api', homeRoutes); 
