@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const subcategories = require("../controllers/subcategories");
+const subcategories = require("../controllers/subcategory");
 
 // Import verifyToken function
 const verifyToken = require("../config/jwt");
