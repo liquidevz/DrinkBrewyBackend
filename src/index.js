@@ -31,11 +31,28 @@ mongoose
   });
 
 // Routes
-const homeRoutes = require('./routes/homeRoutes');
-const productRoutes = require('./routes/productRoutes');
+const homeRoutes = require('./routes/home');
+const productsRoutes = require('./routes/products');
+const userRoutes = require('./routes/user');
+const brandRoutes = require('./routes/brand');
+const categoryRoutes = require('./routes/categories');
+const subcategoryRoutes = require('./routes/subcategories');
+const newsletterRoutes = require('./routes/newsletter');
+const productRoutes = require('./routes/product');
 
-app.use('/api', homeRoutes); // Assuming user routes start with '/users'
-app.use('/api', productRoutes); // Assuming user routes start with '/users'
+
+app.use('/api', homeRoutes); 
+app.use('/api', productsRoutes); 
+app.use('/api', userRoutes);
+app.use('/api', brandRoutes); 
+app.use('/api', categoryRoutes); 
+app.use('/api', subcategoryRoutes); 
+app.use('/api', newsletterRoutes); 
+app.use('/api', productRoutes); 
+
+
+
+
 
 // GET API
 app.get('/', (req, res) => {

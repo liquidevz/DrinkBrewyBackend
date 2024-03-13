@@ -1,0 +1,144 @@
+const Categories = require("../models/Category");
+
+const getBlurDataURL = require("../config/getBlurDataURL");
+
+const createCategory = async (req, res) => {
+  try {
+    const { cover, ...others } = req.body;
+    // Validate if the 'blurDataURL' property exists in the logo object
+    if (!cover.blurDataURL) {
+        // If blurDataURL is not provided, generate it using the 'getBlurDataURL' function
+        cover.blurDataURL = await getBlurDataURL(cover.url);
+      }
+    await Categories.create({
+      ...others,
+      cover: {
+        ...cover,
+      },
+    });
+
+    res.status(201).json({ success: true, message: "category-created" });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+const getAllCategories = async (req, res) => {
+  try {
+    const { limit = 10, page = 1, search = "" } = req.query;
+
+    const skip = parseInt(limit) || 10;
+    const totalCategories = await Categories.find({
+      name: { $regex: search, $options: "i" },
+    });
+    const categories = await Categories.find(
+      {
+        name: { $regex: search, $options: "i" },
+      },
+      null,
+      {
+        skip: skip * (parseInt(page) - 1 || 0),
+        limit: skip,
+      }
+    )
+      .sort({
+        createdAt: -1,
+      });
+
+    res.status(201).json({
+      success: true,
+      data: categories,
+      count: Math.ceil(totalCategories.length / skip),
+    });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+
+const getCategoryBySlug = async (req, res) => {
+  try {
+    const {slug} = req.params;
+    const category = await Categories.findOne({slug });
+
+    if (!category) {
+      return res.status(400).json({
+        message: "item-could-not-be-found",
+      });
+    }
+
+    res.status(201).json({ success: true, data: category });
+  } catch (error) {
+    res.status(400).json({
+      message: "category-could-not-be-found",
+    });
+  }
+};
+const updateCategoryBySlug = async (req, res) => {
+  try {
+    const {slug} = req.params;
+    const { cover, ...others } = req.body;
+  // Validate if the 'blurDataURL' property exists in the logo object
+  if (!cover.blurDataURL) {
+    // If blurDataURL is not provided, generate it using the 'getBlurDataURL' function
+    cover.blurDataURL = await getBlurDataURL(cover.url);
+  }
+    await Categories.findOneAndUpdate(
+      {slug},
+     { ...others,
+      cover: {
+        ...cover,
+      },
+    },
+      { new: true, runValidators: true }
+    );
+
+    res.status(201).json({ success: true, message: "category-updated" });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+const deleteCategoryBySlug = async (req, res) => {
+  try {
+    const {slug} = req.params;
+
+    const category = await Categories.findOneAndDelete({ slug});
+
+    if (!category) {
+      return res.status(400).json({
+        success: false,
+        message: "category-could-not-be-found",
+      });
+    }
+
+
+    res.status(201).json({ success: true ,message:"category deleted successfully"});
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+const getCategories = async (req, res) => {
+    try {
+      
+      const categories = await Categories.find()
+        .sort({
+          createdAt: -1,
+        });
+  
+      res.status(201).json({
+        success: true,
+        data: categories,
+      });
+    } catch (error) {
+      res.status(400).json({success:false, message: error.message });
+    }
+  };
+module.exports = {
+  createCategory,
+  getCategories,
+  getAllCategories,
+  getCategoryBySlug,
+  updateCategoryBySlug,
+  deleteCategoryBySlug,
+};
