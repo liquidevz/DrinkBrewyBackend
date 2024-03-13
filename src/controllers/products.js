@@ -3,7 +3,7 @@ const Brand = require('../models/Brand');
 const Product = require('../models/Product');
 const Category = require('../models/Category');
 const SubCategory = require('../models/SubCategory');
-
+const _ = require('lodash');
 const getProducts = async (req, res) => {
   try {
     const query = req.query; // Extract query params from request
