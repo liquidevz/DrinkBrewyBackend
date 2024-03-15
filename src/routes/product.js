@@ -7,13 +7,13 @@ const verifyToken = require('../config/jwt');
 
 // admin routes
 
-router.post('/admin/product', verifyToken, product.createProduct);
+router.post('/admin/products', verifyToken, product.createProduct);
 router.get('/admin/products', verifyToken, product.GetAllProductsForAdmin);
-router.get('/admin/product/:slug', verifyToken, product.getOneProductBySlug);
-router.put('/admin/product/:slug', verifyToken, product.updateProductBySlug);
+router.get('/admin/products/:slug', verifyToken, product.getOneProductBySlug);
+router.put('/admin/products/:slug', verifyToken, product.updateProductBySlug);
 
 router.delete(
-  '/admin/product/:slug',
+  '/admin/products/:slug',
   verifyToken,
   product.deletedProductBySlug
 );
@@ -23,7 +23,7 @@ router.delete(
 router.get('/products', product.getProducts);
 router.get('/products/filters', product.getFilters);
 router.get('/filters/:category', product.getFiltersByCategory);
-router.get('/product/:slug', product.getOneProductBySlug);
-router.get('/get-products-by-slugs', product.getAllProductSlug);
+router.get('/products/:slug', product.getOneProductBySlug);
+router.get('/products-slugs', product.getAllProductSlug);
 
 module.exports = router;

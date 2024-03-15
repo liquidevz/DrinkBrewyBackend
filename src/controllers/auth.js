@@ -1,12 +1,12 @@
 // controllers/userController.js
-const User = require("../models/User");
+const User = require('../models/User');
 const Products = require('../models/Product');
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
-const otpGenerator =require ("otp-generator");
-const nodemailer =require ("nodemailer");
-const  fs =require ("fs");
-const path =require ("path");
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const otpGenerator = require('otp-generator');
+const nodemailer = require('nodemailer');
+const fs = require('fs');
+const path = require('path');
 const register = async (req, res) => {
   try {
     // Create user in the database
@@ -16,8 +16,9 @@ const register = async (req, res) => {
 
     if (existingUser) {
       return res.status(400).json({
+        UserCount,
         success: false,
-        message: "User with this email already exists",
+        message: 'User with this email already exists',
       });
     }
 
@@ -25,58 +26,62 @@ const register = async (req, res) => {
       upperCaseAlphabets: false,
       specialChars: false,
       lowerCaseAlphabets: false,
-      digits: true
+      digits: true,
     });
     // Create user with the generated OTP
     const user = await User.create({
-       ...request,
-        otp ,
-        role: Boolean(UserCount) ? 'user' : 'super admin'
+      ...request,
+      otp,
+      role: Boolean(UserCount) ? 'user' : 'super admin',
     });
 
-      // Generate JWT token
-      const token = jwt.sign(
-        {
-          _id: user._id
-          // email: user.email,
-        },
-        process.env.JWT_SECRET,
-        {
-          expiresIn: '7d'
-        }
-      );
-      // Path to the HTML file
-      const htmlFilePath = path.join(process.cwd(), 'src/email-templates', 'otp-email.html');
-  
-      // Read HTML file content
-      let htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
-  
-      // Replace the placeholder with the OTP and user email
-      htmlContent = htmlContent.replace(/<h1>[\s\d]*<\/h1>/g, `<h1>${otp}</h1>`);
-      htmlContent = htmlContent.replace(/usingyourmail@gmail\.com/g, user.email);
-  
-      // Create nodemailer transporter
-      let transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: process.env.RECEIVING_EMAIL, // Your Gmail email
-          pass: process.env.EMAIL_PASSWORD // Your Gmail password
-        }
-      });
-  
-      // Email options
-      let mailOptions = {
-        from: process.env.RECEIVING_EMAIL, // Your Gmail email
-        to: user.email, // User's email
-        subject: 'Verify your email',
-        html: htmlContent // HTML content with OTP and user email
-      };
-  
-      // Send email
-      await transporter.sendMail(mailOptions);
+    // Generate JWT token
+    const token = jwt.sign(
+      {
+        _id: user._id,
+        // email: user.email,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: '7d',
+      }
+    );
+    // Path to the HTML file
+    const htmlFilePath = path.join(
+      process.cwd(),
+      'src/email-templates',
+      'otp-email.html'
+    );
+
+    // Read HTML file content
+    let htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
+
+    // Replace the placeholder with the OTP and user email
+    htmlContent = htmlContent.replace(/<h1>[\s\d]*<\/h1>/g, `<h1>${otp}</h1>`);
+    htmlContent = htmlContent.replace(/usingyourmail@gmail\.com/g, user.email);
+
+    // Create nodemailer transporter
+    let transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.RECEIVING_EMAIL, // Your Gmail email
+        pass: process.env.EMAIL_PASSWORD, // Your Gmail password
+      },
+    });
+
+    // Email options
+    let mailOptions = {
+      from: process.env.RECEIVING_EMAIL, // Your Gmail email
+      to: user.email, // User's email
+      subject: 'Verify your email',
+      html: htmlContent, // HTML content with OTP and user email
+    };
+
+    // Send email
+    await transporter.sendMail(mailOptions);
     res.status(201).json({
       success: true,
-      message: "Created user successfully",
+      message: 'Created user successfully',
       otp,
       token,
       user,
@@ -94,48 +99,54 @@ const loginUser = async (req, res) => {
     const user = await User.findOne({ email }).select('+password');
 
     if (!user) {
-      return res.status(404).json({ success: false, message: 'User Not Found' });
+      return res
+        .status(404)
+        .json({ success: false, message: 'User Not Found' });
     }
 
     if (!user.password) {
-      return res.status(404).json({ success: false, message: 'User Password Not Found' });
+      return res
+        .status(404)
+        .json({ success: false, message: 'User Password Not Found' });
     }
 
     const isPasswordMatch = await bcrypt.compare(password, user.password);
 
     if (!isPasswordMatch) {
-      return res.status(400).json({ success: false, message: 'Incorrect Password' });
+      return res
+        .status(400)
+        .json({ success: false, message: 'Incorrect Password' });
     }
 
     const token = jwt.sign(
       {
         _id: user._id,
-        email: user.email
+        email: user.email,
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: '7d'
+        expiresIn: '7d',
       }
     );
 
     const products = await Products.aggregate([
       {
         $match: {
-          _id: { $in: user.wishlist }
-        }
+          _id: { $in: user.wishlist },
+        },
       },
       {
         $lookup: {
           from: 'reviews',
           localField: 'reviews',
           foreignField: '_id',
-          as: 'reviews'
-        }
+          as: 'reviews',
+        },
       },
       {
         $addFields: {
-          averageRating: { $avg: '$reviews.rating' }
-        }
+          averageRating: { $avg: '$reviews.rating' },
+        },
       },
       {
         $project: {
@@ -152,9 +163,9 @@ const loginUser = async (req, res) => {
           available: 1,
           priceSale: 1,
           price: 1,
-          averageRating: 1
-        }
-      }
+          averageRating: 1,
+        },
+      },
     ]);
 
     return res.status(201).json({
@@ -176,8 +187,8 @@ const loginUser = async (req, res) => {
         state: user.state,
         about: user.about,
         role: user.role,
-        wishlist: products
-      }
+        wishlist: products,
+      },
     });
   } catch (error) {
     return res.status(400).json({ success: false, error: error.message });
@@ -190,31 +201,40 @@ const forgetPassword = async (req, res) => {
     const user = await User.findOne({ email: request.email });
 
     if (!user) {
-      return res.status(404).json({ success: false, message: 'User Not Found ' });
+      return res
+        .status(404)
+        .json({ success: false, message: 'User Not Found ' });
     }
 
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: '7d'
+      expiresIn: '7d',
     });
     // Constructing the link with the token
     const resetPasswordLink = `${request.origin}/auth/reset-password/${token}`;
 
     // Path to the HTML file
-    const htmlFilePath = path.join(process.cwd(), 'src/email-templates', 'forget-password.html');
+    const htmlFilePath = path.join(
+      process.cwd(),
+      'src/email-templates',
+      'forget-password.html'
+    );
 
     // Read HTML file content
     let htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
 
     // Replace the href attribute of the <a> tag with the reset password link
-    htmlContent = htmlContent.replace(/href="javascript:void\(0\);"/g, `href="${resetPasswordLink}"`);
+    htmlContent = htmlContent.replace(
+      /href="javascript:void\(0\);"/g,
+      `href="${resetPasswordLink}"`
+    );
 
     // Create nodemailer transporter
     let transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: process.env.RECEIVING_EMAIL, // Your Gmail email
-        pass: process.env.EMAIL_PASSWORD // Your Gmail password
-      }
+        pass: process.env.EMAIL_PASSWORD, // Your Gmail password
+      },
     });
 
     // Email options
@@ -222,7 +242,7 @@ const forgetPassword = async (req, res) => {
       from: process.env.RECEIVING_EMAIL, // Your Gmail email
       to: user.email, // User's email
       subject: 'Verify your email',
-      html: htmlContent // HTML content with OTP and user email
+      html: htmlContent, // HTML content with OTP and user email
     };
 
     // Send email synchronously
@@ -231,11 +251,13 @@ const forgetPassword = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: 'Forgot password email sent successfully.',
-      token
+      token,
     });
   } catch (error) {
     console.error('Error sending email:', error);
-    return res.status(500).json({ success: false, message: 'Error sending email.' });
+    return res
+      .status(500)
+      .json({ success: false, message: 'Error sending email.' });
   }
 };
 
@@ -250,23 +272,24 @@ const resetPassword = async (req, res) => {
     } catch (err) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid or expired token. Please request a new one.'
+        message: 'Invalid or expired token. Please request a new one.',
       });
     }
 
     // Find the user by ID from the token
     const user = await User.findById(decoded._id).select('password');
-    
+
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: 'User Not Found '
+        message: 'User Not Found ',
       });
     }
     if (!newPassword || !user.password) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid data. Both newPassword and user.password are required.'
+        message:
+          'Invalid data. Both newPassword and user.password are required.',
       });
     }
 
@@ -275,20 +298,20 @@ const resetPassword = async (req, res) => {
     if (isSamePassword) {
       return res.status(400).json({
         success: false,
-        message: 'New password must be different from the old password.'
+        message: 'New password must be different from the old password.',
       });
     }
     // Update the user's password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     await User.findByIdAndUpdate(user._id, {
-      password: hashedPassword
+      password: hashedPassword,
     });
 
     return res.status(201).json({
       success: true,
       message: 'Password Updated Successfully.',
-      user
+      user,
     });
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });
@@ -303,14 +326,16 @@ const verifyOtp = async (req, res) => {
     const user = await User.findOne({ email }).maxTimeMS(30000).exec();
 
     if (!user) {
-      return res.status(404).json({ success: false, message: 'User Not Found' });
+      return res
+        .status(404)
+        .json({ success: false, message: 'User Not Found' });
     }
 
     // Check if the OTP is already verified
     if (user.isVerified) {
       return res.status(400).json({
         success: false,
-        message: 'OTP has already been verified'
+        message: 'OTP has already been verified',
       });
     }
 
@@ -326,7 +351,6 @@ const verifyOtp = async (req, res) => {
       message = 'Invalid OTP';
       return res.status(404).json({ success: false, message });
     }
-
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });
   }
@@ -340,13 +364,15 @@ const resendOtp = async (req, res) => {
     const user = await User.findOne({ email }).maxTimeMS(30000).exec();
 
     if (!user) {
-      return res.status(404).json({ success: false, message: 'User Not Found' });
+      return res
+        .status(404)
+        .json({ success: false, message: 'User Not Found' });
     }
 
     if (user.isVerified) {
       return res.status(400).json({
         success: false,
-        message: 'OTP has already been verified'
+        message: 'OTP has already been verified',
       });
     }
     // Generate new OTP
@@ -354,15 +380,19 @@ const resendOtp = async (req, res) => {
       upperCaseAlphabets: false,
       specialChars: false,
       lowerCaseAlphabets: false,
-      digits: true
+      digits: true,
     });
     // Update the user's OTP
     await User.findByIdAndUpdate(user._id, {
-      otp: otp.toString()
+      otp: otp.toString(),
     });
 
     // Path to the HTML file
-    const htmlFilePath = path.join(process.cwd(), 'src/email-templates', 'otp-email.html');
+    const htmlFilePath = path.join(
+      process.cwd(),
+      'src/email-templates',
+      'otp-email.html'
+    );
 
     // Read HTML file content
     let htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
@@ -376,8 +406,8 @@ const resendOtp = async (req, res) => {
       service: 'gmail',
       auth: {
         user: process.env.RECEIVING_EMAIL, // Your Gmail email
-        pass: process.env.EMAIL_PASSWORD // Your Gmail password
-      }
+        pass: process.env.EMAIL_PASSWORD, // Your Gmail password
+      },
     });
 
     // Email options
@@ -385,16 +415,16 @@ const resendOtp = async (req, res) => {
       from: process.env.RECEIVING_EMAIL, // Your Gmail email
       to: user.email, // User's email
       subject: 'Verify your email',
-      html: htmlContent // HTML content with OTP and user email
+      html: htmlContent, // HTML content with OTP and user email
     };
 
     // Send email
     await transporter.sendMail(mailOptions);
-    
+
     // Return the response
     return res.status(200).json({
       success: true,
-      message: 'OTP Resent Successfully'
+      message: 'OTP Resent Successfully',
     });
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });

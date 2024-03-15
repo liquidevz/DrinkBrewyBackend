@@ -34,6 +34,10 @@ const reviewSchema = new mongoose.Schema(
           type: String,
           // required: [true, 'image-url-required-error']
         },
+        blurDataURL: {
+          type: String,
+          required: [true, 'image-blur-data-url-required-error'],
+        },
       },
     ],
   },

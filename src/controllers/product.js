@@ -3,8 +3,9 @@ const Brand = require('../models/Brand');
 const Product = require('../models/Product');
 const Category = require('../models/Category');
 const SubCategory = require('../models/SubCategory');
-const Review = require('../models/Review');
 const _ = require('lodash');
+const blurDataUrl = require('../config/getBlurDataURL');
+
 const getProducts = async (req, res) => {
   try {
     const query = req.query; // Extract query params from request
@@ -141,7 +142,7 @@ const getProducts = async (req, res) => {
       },
       {
         $project: {
-          image: { url: '$image.url' },
+          image: { url: '$image.url', blurDataURL: '$image.blurDataURL' },
           name: 1,
           slug: 1,
           colors: 1,
@@ -224,10 +225,12 @@ const getFilters = async (req, res) => {
 };
 async function GetAllProductsForAdmin(request, response) {
   try {
-    const { searchParams } = new URL(request.url);
-    const pageQuery = searchParams.get('page');
-    const limitQuery = searchParams.get('limit');
-    const searchQuery = searchParams.get('search');
+    const {
+      page: pageQuery,
+      limit: limitQuery,
+      search: searchQuery,
+    } = request.query;
+
     const limit = parseInt(limitQuery) || 10;
     const page = parseInt(pageQuery) || 1;
 
@@ -268,18 +271,10 @@ async function GetAllProductsForAdmin(request, response) {
           averageRating: { $avg: '$reviews.rating' },
         },
       },
-      {
-        $lookup: {
-          from: 'categories',
-          localField: 'category',
-          foreignField: '_id',
-          as: 'category',
-        },
-      },
+
       {
         $project: {
           _id: 1,
-          cover: 1,
           status: 1,
           createdAt: 1,
           name: 1,
@@ -289,11 +284,11 @@ async function GetAllProductsForAdmin(request, response) {
           images: 1,
           priceSale: 1,
           available: 1,
-          category: {
-            _id: 1,
-            name: 1, // Include the fields you need from the category
-          },
-          reviews: 1,
+          // category: {
+          //   _id: 1,
+          //   name: 1, // Include the fields you need from the category
+          // },
+          // reviews: 1,
           averageRating: 1,
         },
       },
@@ -313,11 +308,16 @@ async function GetAllProductsForAdmin(request, response) {
 async function createProduct(req, res) {
   try {
     const { images, ...body } = req.body;
-    const blurDataUrl = await blurDataUrl(images[0].url);
+
+    const updatedImages = await Promise.all(
+      images.map(async (image) => {
+        const blurDataURL = await blurDataUrl(image.url);
+        return { ...image, blurDataURL };
+      })
+    );
     const data = await Product.create({
       ...body,
-      cover: images[0].url,
-      blurDataUrl: blurDataUrl,
+      images: updatedImages,
       likes: 0,
     });
 
@@ -382,15 +382,19 @@ const updateProductBySlug = async (req, res) => {
   try {
     const { slug } = req.params;
     const { images, ...body } = req.body;
-    const coverUrl = images[0].url;
-    const blurDataUrl = await blurDataUrl(coverUrl);
+
+    const updatedImages = await Promise.all(
+      images.map(async (image) => {
+        const blurDataURL = await blurDataUrl(image.url);
+        return { ...image, blurDataURL };
+      })
+    );
 
     const updated = await Product.findOneAndUpdate(
-      { slug },
+      { slug: slug },
       {
         ...body,
-        cover: coverUrl,
-        blurDataUrl: blurDataUrl,
+        images: updatedImages,
       },
       { new: true, runValidators: true }
     );
@@ -409,9 +413,9 @@ async function deletedProductBySlug(req, res) {
     const slug = req.params.slug;
     const product = await Product.findOne({ slug: slug });
     const length = product?.images?.length || 0;
-    for (let i = 0; i < length; i++) {
-      await multiFilesDelete(product?.images[i]);
-    }
+    // for (let i = 0; i < length; i++) {
+    //   await multiFilesDelete(product?.images[i]);
+    // }
 
     const deleteProduct = await Product.deleteOne({ slug: req.params.slug });
     if (!deleteProduct) {

@@ -20,7 +20,7 @@ const UserSchema = new mongoose.Schema(
       type: String,
       select: false,
       required: [true, 'Please enter a password'],
-      minlength: 8
+      minlength: 8,
     },
     gender: {
       type: String,
@@ -32,6 +32,9 @@ const UserSchema = new mongoose.Schema(
         type: String,
       },
       url: { type: String },
+      blurDataURL: {
+        type: String,
+      },
     },
     wishlist: [
       {

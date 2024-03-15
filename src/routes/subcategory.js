@@ -1,50 +1,50 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const subcategories = require("../controllers/subcategory");
+const subcategories = require('../controllers/subcategory');
 
 // Import verifyToken function
-const verifyToken = require("../config/jwt");
+const verifyToken = require('../config/jwt');
 
 router.post(
-  "/admin/subcategory",
+  '/admin/subcategories',
   verifyToken,
   subcategories.createsubcategories
 );
 
 router.get(
-  "/admin/subcategories",
+  '/admin/subcategories',
   verifyToken,
   subcategories.getAllSubCategories
 );
 
 router.get(
-  "/admin/subcategory/:slug",
+  '/admin/subcategories/:slug',
   verifyToken,
   subcategories.getSubCategoriesBySlug
 );
 
 router.put(
-  "/admin/subcategory/:slug",
+  '/admin/subcategories/:slug',
   verifyToken,
   subcategories.updateSubCategoriesBySlug
 );
 
 router.delete(
-  "/admin/subcategory/:slug",
+  '/admin/subcategories/:slug',
   verifyToken,
   subcategories.deleteSubCategoriesBySlug
 );
 router.get(
-    "/admin/subcategories/all",
-    verifyToken,
-    subcategories.getSubCategories
-  );
-  
+  '/admin/subcategories/all',
+  verifyToken,
+  subcategories.getSubCategories
+);
+
 // User routes
 
-router.get("/subcategories", subcategories.getSubCategories);
-router.get("/all-subcategories", subcategories.getAllSubCategories);
+router.get('/subcategories', subcategories.getSubCategories);
+router.get('/subcategories/all', subcategories.getAllSubCategories);
 
-router.get("/subcategory/:slug", subcategories.getSubCategoriesBySlug);
+router.get('/subcategories/:slug', subcategories.getSubCategoriesBySlug);
 
 module.exports = router;

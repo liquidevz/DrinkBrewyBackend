@@ -1,50 +1,38 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const categories = require("../controllers/category");
+const categories = require('../controllers/category');
 
 // Import verifyToken function
-const verifyToken = require("../config/jwt");
+const verifyToken = require('../config/jwt');
 
-router.post(
-  "/admin/category",
-  verifyToken,
-  categories.createCategory
-);
+router.post('/admin/categories', verifyToken, categories.createCategory);
+
+router.get('/admin/categories', verifyToken, categories.getCategories);
 
 router.get(
-  "/admin/categories",
-  verifyToken,
-  categories.getCategories
-);
-
-router.get(
-  "/admin/category/:slug",
+  '/admin/categories/:slug',
   verifyToken,
   categories.getCategoryBySlug
 );
 
 router.put(
-  "/admin/category/:slug",
+  '/admin/categories/:slug',
   verifyToken,
   categories.updateCategoryBySlug
 );
 
 router.delete(
-  "/admin/category/:slug",
+  '/admin/categories/:slug',
   verifyToken,
   categories.deleteCategoryBySlug
 );
-router.get(
-    "/admin/categories/all",
-    verifyToken,
-    categories.getCategories
-  );
-  
+router.get('/admin/categories/all', verifyToken, categories.getCategories);
+
 // User routes
 
-router.get("/categories", categories.getCategories);
-router.get("/all-categories", categories.getAllCategories);
+router.get('/categories', categories.getCategories);
+router.get('/categories/all', categories.getAllCategories);
 
-router.get("/category/:slug", categories.getCategoryBySlug);
+router.get('/categories/:slug', categories.getCategoryBySlug);
 
 module.exports = router;
