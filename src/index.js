@@ -32,24 +32,35 @@ mongoose
 
 // Routes
 const homeRoutes = require('./routes/home');
-// const productsRoutes = require('./routes/products');
-const userRoutes = require('./routes/user');
+const authRoutes = require('./routes/auth');
 const brandRoutes = require('./routes/brand');
 const categoryRoutes = require('./routes/category');
 const subcategoryRoutes = require('./routes/subcategory');
 const newsletterRoutes = require('./routes/newsletter');
 const productRoutes = require('./routes/product');
 const dashboardRoutes = require('./routes/dashboard');
+const searchRoutes = require('./routes/search');
+const best_sellerRoutes = require('./routes/best-seller');
+const userRoutes = require('./routes/user');
+const cartRoutes = require('./routes/cart');
+
 
 app.use('/api', homeRoutes);
-// app.use('/api', productsRoutes);
-app.use('/api', userRoutes);
+app.use('/api', authRoutes);
 app.use('/api', brandRoutes);
 app.use('/api', categoryRoutes);
 app.use('/api', subcategoryRoutes);
 app.use('/api', newsletterRoutes);
 app.use('/api', productRoutes);
 app.use('/api', dashboardRoutes);
+app.use('/api', searchRoutes);
+app.use('/api', best_sellerRoutes);
+app.use('/api', userRoutes);
+app.use('/api', cartRoutes);
+
+
+
+
 
 // GET API
 app.get('/', (req, res) => {

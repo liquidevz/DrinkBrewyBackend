@@ -1,20 +1,16 @@
 const express = require("express");
 const router = express.Router();
-const authController = require("../controllers/auth");
-const verifyToken = require("../config/jwt");
+const userController = require("../controllers/user");
 
-router.post("/auth/register", authController.register);
 
-router.post("/auth/login", authController.loginUser);
+router.get("/user/profile", userController.getOneUser);
 
-router.post("/auth/forget-password", authController.forgetPassword);
+router.put("/user/profile", userController.updateUser);
 
-router.post("/auth/reset-password", authController.resetPassword);
+router.get("/user/invoice", userController.getInvoice);
 
-router.post("/auth/verify-otp", authController.verifyOtp);
+router.put("/user/changepassword", userController.changePassword);
 
-router.post("/auth/resend-otp", authController.resendOtp);
 
-// router.get("/profile", verifyToken, userController.getProfile);
 
 module.exports = router;
