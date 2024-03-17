@@ -11,11 +11,11 @@ router.post('/admin/brands', verifyToken, brand.createBrand);
 
 router.get('/admin/brands', verifyToken, brand.getAllBrands);
 
-router.get('/admin/brands/:slug', verifyToken, brand.getBrandBySlug);
+router.get('/admin/brand/:slug', verifyToken, brand.getBrandBySlug);
 
-router.put('/admin/brands/:slug', verifyToken, brand.updateBrandBySlug);
+router.put('/admin/brand/:slug', verifyToken, brand.updateBrandBySlug);
 
-router.delete('/admin/brands/:slug', verifyToken, brand.deleteBrandBySlug);
+router.delete('/admin/brand/:slug', verifyToken, brand.deleteBrandBySlug);
 
 router.get('/admin/brands/all', verifyToken, brand.getBrands);
 

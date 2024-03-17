@@ -3,13 +3,13 @@ const router = express.Router();
 const userController = require("../controllers/user");
 
 
-router.get("/user/profile", userController.getOneUser);
+router.get("/users/profile", userController.getOneUser);
 
-router.put("/user/profile", userController.updateUser);
+router.put("/users/profile", userController.updateUser);
 
-router.get("/user/invoice", userController.getInvoice);
+router.get("users/invoice", userController.getInvoice);
 
-router.put("/user/changepassword", userController.changePassword);
+router.put("users/changepassword", userController.changePassword);
 
 
 
