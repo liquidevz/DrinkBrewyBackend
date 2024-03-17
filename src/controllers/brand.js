@@ -1,5 +1,7 @@
 const Brands = require('../models/Brand');
 const getBlurDataURL = require('../config/getBlurDataURL');
+const {singleFileDelete} = require('../config/uploader');
+
 
 const createBrand = async (req, res) => {
   try {
@@ -114,7 +116,7 @@ const deleteBrandBySlug = async (req, res) => {
     }
 
     // Uncomment the line below if you have a function to delete the logo file
-    // await singleFileDelete(brand?.logo?._id);
+    await singleFileDelete(brand?.logo?._id);
 
     await Brands.deleteOne({ slug });
 
