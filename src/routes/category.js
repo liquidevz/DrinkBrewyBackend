@@ -5,23 +5,23 @@ const categories = require('../controllers/category');
 // Import verifyToken function
 const verifyToken = require('../config/jwt');
 
-router.post('/admin/categories', verifyToken, categories.createCategory);
+router.post('admin/category', verifyToken, categories.createCategory);
 
-router.get('/admin/categories', verifyToken, categories.getCategories);
+router.get('admin/categories', verifyToken, categories.getCategories);
 
 router.get(
-  '/admin/categories/:slug',
+  '/admin/category/:slug',
   verifyToken,
   categories.getCategoryBySlug
 );
 
 router.put(
-  '/admin/categories/:slug',
+  'admin/category/:slug',
   verifyToken,
   categories.updateCategoryBySlug
 );
 router.delete(
-  '/admin/categories/:slug',
+  'admin/category/:slug',
   verifyToken,
   categories.deleteCategoryBySlug
 );

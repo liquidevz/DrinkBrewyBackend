@@ -1,4 +1,3 @@
-const dbConnect = require('src/lib/db/dbConnect');
 const Notifications = require('src/models/Notification');
 const Products = require('src/models/Product');
 const Orders = require('src/models/Order');
@@ -20,7 +19,6 @@ function readHTMLTemplate() {
 
 const createOrder = async (req, res) => {
   try {
-    await dbConnect();
     const { items, user, paymentMethod, paymentId, couponCode, totalItems } = await req.json();
     const shipping = parseInt(process.env.SHIPPING_FEE);
     
@@ -198,20 +196,120 @@ const getOrderById = async (req, res) => {
         createdAt: -1
       });
   
-      return NextResponse.json(
+      return res.status(200).json(
         {
           success: true,
           data: orders,
           total: totalOrders,
           count: Math.ceil(totalOrders / limit),
           currentPage: page
-        },
-        { status: 200 }
+        }
       );
     } catch (error) {
-      return NextResponse.json({ success: false, message: error.message }, { status: 400 });
+      return res.status(400).json({ success: false, message: error.message });
     }
   }
-  
-  module.exports = { createOrder, getOrderById,getOrderforAdmin };
+
+const getOneOrderForAdmin=async(req,res)=> {
+  try {
+    const id = req.params.id;
+    await Notifications.findOneAndUpdate(
+      { orderId: id },
+      {
+        opened: true
+      },
+      {
+        new: true,
+        runValidators: true
+      }
+    );
+    const orderGet = await Orders.findById({ _id: id });
+    if (!orderGet) {
+      return res.status(404).json(
+        {
+          success: false,
+          message: 'Order Not Found'
+        }
+      );
+    }
+
+    return res.status(200).json(
+      {
+        success: true,
+        data: orderGet
+      }
+    );
+  } catch (error) {
+    return res.status(400).json({ success: false, message: error.message });
+  }
+}
+const updateOrderForAdmin= async(req,res)=> {
+  try {
+    const id = req.params.id;
+    const data = await req.body;
+    const order = await Orders.findByIdAndUpdate(id, data, {
+      new: true,
+      runValidators: true
+    });
+    if (!order) {
+      return res.status(404).json(
+        {
+          success: false,
+          message: 'Order Not Found'
+        }
+      );
+    }
+    return res.status(200).json(
+      {
+        success: true,
+        message: 'Order Updated'
+      }
+    );
+  } catch (error) {
+    return res.status(400).json({ success: false, message: error.message });
+  }
+}
+const deleteOrderForAdmin=async(req,res)=> {
+  try {
+    const orderId = req.params.id;
+
+    // Find the order to be deleted
+    const order = await Orders.findById(orderId);
+    if (!order) {
+      return res.status(404).json(
+        {
+          success: false,
+          message: 'Order Not Found'
+        }
+      );
+    }
+
+    // Delete the order from the Orders collection
+    await Orders.findByIdAndDelete(orderId);
+
+    // Remove the order ID from the user's order array
+    await User.findOneAndUpdate({ _id: order.user }, { $pull: { orders: orderId } });
+
+    // Delete notifications related to the order
+    await Notifications.deleteMany({ orderId });
+
+    return res.status(200).json(
+      {
+        success: true,
+        message: 'Order Deleted'
+      }
+    );
+  } catch (error) {
+    return res.status(400).json({ success: false, message: error.message });
+  }
+}
+
+  module.exports = {
+      createOrder,
+      getOrderById,
+      getOrderforAdmin,
+      getOneOrderForAdmin,
+      updateOrderForAdmin,
+      deleteOrderForAdmin
+    };
   

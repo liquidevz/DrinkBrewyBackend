@@ -56,33 +56,34 @@ const updateUser=async(req,res)=> {
 
 
 const getInvoice = async (req, res) => {
+  
     try {
       const user = await getUser();
       const { limit = 10, page = 1 } = req.query;
 
-      const skip = parseInt(limit) || 10;
+      const skip = parseInt(limit) * (parseInt(page) - 1) || 0;
       const totalOrderCount = await Orders.countDocuments();
-  
+
       const orders = await Orders.find(
         { 'user.email': user.email },
-        null,
-        {
-          skip: skip * (parseInt(page) - 1 || 0),
-          limit: skip,
-        }
+          null,
+          {
+              skip: skip,
+              limit: parseInt(limit)
+          }
       ).sort({
-        createdAt: -1,
+          createdAt: -1,
       });
 
-  
+
       return res.status(200).json({
-        success: true,
-        data: orders,
-        count: Math.ceil(totalOrderCount / skip),
+          success: true,
+          data: orders,
+          count: Math.ceil(totalOrderCount / parseInt(limit)),
       });
-    } catch (error) {
+  } catch (error) {
       return res.status(400).json({ success: false, message: error.message });
-    }
+  }
   }
   
 const changePassword=async(req,res)=> {

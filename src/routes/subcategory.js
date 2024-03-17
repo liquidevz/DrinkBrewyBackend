@@ -6,7 +6,7 @@ const subcategories = require('../controllers/subcategory');
 const verifyToken = require('../config/jwt');
 
 router.post(
-  '/admin/subcategories',
+  'admin/subcategory',
   verifyToken,
   subcategories.createsubcategories
 );
@@ -18,19 +18,19 @@ router.get(
 );
 
 router.get(
-  '/admin/subcategories/:slug',
+  '/admin/subcategory/:slug',
   verifyToken,
   subcategories.getSubCategoriesBySlug
 );
 
 router.put(
-  '/admin/subcategories/:slug',
+  '/admin/subcategory/:slug',
   verifyToken,
   subcategories.updateSubCategoriesBySlug
 );
 
 router.delete(
-  '/admin/subcategories/:slug',
+  '/admin/subcategory/:slug',
   verifyToken,
   subcategories.deleteSubCategoriesBySlug
 );
