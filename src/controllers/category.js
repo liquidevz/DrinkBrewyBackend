@@ -52,7 +52,12 @@ const getAllCategories = async (req, res) => {
 const getCategoryBySlug = async (req, res) => {
   try {
     const { slug } = req.params;
-    const category = await Categories.findOne({ slug });
+    const category = await Categories.findOne({ slug }).select([
+      'metaTitle',
+      'metaDescription',
+      'cover.url',
+      'slug',
+    ]);
 
     if (!category) {
       return res.status(400).json({
@@ -143,6 +148,32 @@ const getCategories = async (req, res) => {
     res.status(400).json({ success: false, message: error.message });
   }
 };
+const getCategoriesSlugs = async (req, res) => {
+  try {
+    const categories = await Categories.find().select('slug');
+
+    res.status(201).json({
+      success: true,
+      data: categories,
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+const getSubCategoriesSlugs = async (req, res) => {
+  try {
+    const categories = await SubCategories.find()
+      .select('slug')
+      .populate({ path: 'parentCategory', select: ['slug'] });
+
+    res.status(201).json({
+      success: true,
+      data: categories,
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
 module.exports = {
   createCategory,
   getCategories,
@@ -150,4 +181,6 @@ module.exports = {
   getCategoryBySlug,
   updateCategoryBySlug,
   deleteCategoryBySlug,
+  getCategoriesSlugs,
+  getSubCategoriesSlugs,
 };

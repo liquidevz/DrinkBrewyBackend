@@ -23,6 +23,7 @@ router.delete(
 router.get('/products', product.getProducts);
 router.get('/products/filters', product.getFilters);
 router.get('/filters/:category', product.getFiltersByCategory);
+router.get('/filters/:category/:subcategory', product.getFiltersBySubCategory);
 router.get('/products/:slug', product.getOneProductBySlug);
 router.get('/products-slugs', product.getAllProductSlug);
 

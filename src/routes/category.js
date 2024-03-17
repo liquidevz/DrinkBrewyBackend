@@ -20,7 +20,6 @@ router.put(
   verifyToken,
   categories.updateCategoryBySlug
 );
-
 router.delete(
   '/admin/categories/:slug',
   verifyToken,
@@ -32,7 +31,8 @@ router.get('/admin/categories/all', verifyToken, categories.getCategories);
 
 router.get('/categories', categories.getCategories);
 router.get('/categories/all', categories.getAllCategories);
-
+router.get('/categories-slugs', categories.getCategoriesSlugs);
+router.get('/subcategories-slugs', categories.getSubCategoriesSlugs);
 router.get('/categories/:slug', categories.getCategoryBySlug);
 
 module.exports = router;

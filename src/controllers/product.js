@@ -28,13 +28,14 @@ const getProducts = async (req, res) => {
     }
     const brand = await Brand.findOne({
       slug: query.brand,
-    }).select(['_id']);
+    }).select('slug');
     const category = await Category.findOne({
       slug: query.category,
-    }).select(['_id']);
+    }).select('slug');
+
     const subCategory = await SubCategory.findOne({
       slug: query.subCategory,
-    }).select(['_id']);
+    }).select('slug');
     const skip = query.limit || 12;
     const totalProducts = await Product.countDocuments({
       ...newQuery,
@@ -71,51 +72,18 @@ const getProducts = async (req, res) => {
           image: { $arrayElemAt: ['$images', 0] },
         },
       },
-      {
-        $lookup: {
-          from: 'categories', // Update with the actual collection name for brands
-          localField: 'category',
-          foreignField: '_id',
-          as: 'category',
-        },
-      },
-      {
-        $lookup: {
-          from: 'subCategories', // Update with the actual collection name for brands
-          localField: 'subCategory',
-          foreignField: '_id',
-          as: 'subCategory',
-        },
-      },
-      {
-        $addFields: {
-          category: { $arrayElemAt: ['$category', 0] }, // Assuming brandInfo is an array with one element
-          subCategory: { $arrayElemAt: ['$subCategory', 0] }, // Assuming brandInfo is an array with one element
-        },
-      },
-      {
-        $lookup: {
-          from: 'brands', // Update with the actual collection name for brands
-          localField: 'brand',
-          foreignField: '_id',
-          as: 'brand',
-        },
-      },
-      {
-        $addFields: {
-          brand: { $arrayElemAt: ['$brand', 0] }, // Assuming brandInfo is an array with one element
-        },
-      },
+
       {
         $match: {
           ...(Boolean(query.category) && {
-            'category.slug': query.category,
+            'category._id': query.category,
           }),
-          ...(Boolean(query.subCategory) && {
-            'subCategory.slug': subCategory.slug,
+          ...(Boolean(query.category) && {
+            'subCategory._id': mongoose.Types.ObjectId(subCategory._id),
           }),
+
           ...(Boolean(query.brand) && {
-            'brand.slug': query.brand,
+            'brand._id': query.brand,
           }),
           ...(query.isFeatured && {
             isFeatured: Boolean(query.isFeatured),
@@ -436,14 +404,12 @@ async function deletedProductBySlug(req, res) {
 
 const getFiltersByCategory = async (req, res) => {
   try {
-    const { category, subcategory } = req.params;
+    const { category } = req.params;
 
-    let categoryQuery = { slug: category };
-    if (subcategory) {
-      categoryQuery = { slug: subcategory, parent: category };
-    }
-
-    const categoryData = await Category.findOne(categoryQuery);
+    const categoryData = await Category.findOne({ slug: category }).select([
+      'name',
+      'slug',
+    ]);
     if (!categoryData) {
       return res
         .status(404)
@@ -453,7 +419,7 @@ const getFiltersByCategory = async (req, res) => {
       status: { $ne: 'disabled' },
       category: categoryData._id,
     }).select(['colors', 'sizes', 'gender']);
-    const brands = await Brands.find({
+    const brands = await Brand.find({
       status: { $ne: 'disabled' },
     }).select(['name', 'slug']);
 
@@ -483,6 +449,66 @@ const getFiltersByCategory = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+const getFiltersBySubCategory = async (req, res) => {
+  try {
+    const { category, subcategory } = req.params;
+
+    const categoryData = await Category.findOne({ slug: category }).select([
+      'name',
+      'slug',
+    ]);
+    const subCategoryData = await SubCategory.findOne({
+      slug: subcategory,
+    }).select(['name', 'slug']);
+    if (!categoryData) {
+      return res
+        .status(404)
+        .json({ success: false, message: 'Category not found' });
+    }
+    if (!subCategoryData) {
+      return res
+        .status(404)
+        .json({ success: false, message: 'SubCategory not found' });
+    }
+    const totalProducts = await Product.find({
+      status: { $ne: 'disabled' },
+      subCategory: subCategoryData._id,
+    }).select(['colors', 'sizes', 'gender']);
+    const brands = await Brand.find({
+      status: { $ne: 'disabled' },
+    }).select(['name', 'slug']);
+
+    const total = totalProducts.map((item) => item.gender);
+    const totalGender = total.filter((item) => item !== '');
+
+    function onlyUnique(value, index, array) {
+      return array.indexOf(value) === index;
+    }
+    const mappedColors = totalProducts?.map((v) => v.colors);
+    const mappedSizes = totalProducts?.map((v) => v.sizes);
+    const mappedPrices = totalProducts?.map((v) => v.price);
+    const min = mappedPrices[0] ? Math.min(...mappedPrices[0]) : 0;
+    const max = mappedPrices[0] ? Math.max(...mappedPrices[0]) : 100000;
+    const response = {
+      colors: _.union(...mappedColors),
+      sizes: _.union(...mappedSizes),
+      prices: [min, max],
+      genders: totalGender.filter(onlyUnique),
+      brands: brands,
+    };
+    res.status(200).json({
+      success: true,
+      data: {
+        filters: response,
+        category: categoryData,
+        subCategory: subCategoryData,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 const getAllProductSlug = async (req, res) => {
   try {
     const products = await Product.find().select('slug');
@@ -505,4 +531,5 @@ module.exports = {
   deletedProductBySlug,
   getFiltersByCategory,
   getAllProductSlug,
+  getFiltersBySubCategory,
 };
