@@ -46,10 +46,7 @@ const cartRoutes = require('./routes/cart');
 const couponCodeRoutes = require('./routes/coupon-code');
 const reviewRoutes = require('./routes/review');
 const wishlistRoutes = require('./routes/wishlist');
-
-
-
-
+const OrderRoutes = require('./routes/order');
 
 app.use('/api', homeRoutes);
 app.use('/api', authRoutes);
@@ -66,13 +63,7 @@ app.use('/api', cartRoutes);
 app.use('/api', couponCodeRoutes);
 app.use('/api', reviewRoutes);
 app.use('/api', wishlistRoutes);
-
-
-
-
-
-
-
+app.use('/api', OrderRoutes);
 
 // GET API
 app.get('/', (req, res) => {

@@ -5,7 +5,6 @@ const Category = require('../models/Category');
 const SubCategory = require('../models/SubCategory');
 const _ = require('lodash');
 const blurDataUrl = require('../config/getBlurDataURL');
-
 const getProducts = async (req, res) => {
   try {
     const query = req.query; // Extract query params from request
@@ -76,10 +75,10 @@ const getProducts = async (req, res) => {
       {
         $match: {
           ...(Boolean(query.category) && {
-            'category._id': query.category,
+            'category._id': category._id,
           }),
-          ...(Boolean(query.category) && {
-            'subCategory._id': mongoose.Types.ObjectId(subCategory._id),
+          ...(Boolean(query.subCategory) && {
+            'subCategory._id': subCategory._id,
           }),
 
           ...(Boolean(query.brand) && {
@@ -336,11 +335,11 @@ async function getOneProductBySlug(req, res) {
     const reviewReport = await getProductRatingAndReviews();
     return res.status(201).json({
       success: true,
-      data: JSON.parse(JSON.stringify(product)),
-      totalRating: JSON.parse(JSON.stringify(reviewReport[0]?.rating)),
-      totalReviews: JSON.parse(JSON.stringify(reviewReport[0]?.totalReviews)),
-      brand: JSON.parse(JSON.stringify(brand)),
-      category: JSON.parse(JSON.stringify(category)),
+      data: product,
+      totalRating: reviewReport[0]?.rating,
+      totalReviews: reviewReport[0]?.totalReviews,
+      brand: brand,
+      category: category,
     });
   } catch (error) {
     return res.status(400).json({ success: false, error: error.message });

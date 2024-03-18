@@ -1,39 +1,50 @@
-const jwt = require('jsonwebtoken');
 const Users = require('../models/User');
 
-exports.getUser = async (token) => {
-  if (!token) {
-    return { error: 'You must be logged in.', status: 401 };
+exports.getUser = async (req, res) => {
+  if (!req.user) {
+    return res
+      .status(401)
+      .json({ success: false, message: 'You must be logged in.' });
   }
 
   try {
-    const { _id } = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await Users.findOne({ _id });
+    const user = await Users.findById(req.user._id);
     if (!user) {
-      return { error: 'User not found.', status: 404 };
+      return res
+        .status(404)
+        .json({ success: false, message: 'User not found.' });
     }
-    console.log(user, 'user');
+
     return user;
   } catch (error) {
-    console.error('Error retrieving user:', error);
-    return { error: 'Internal server error.', status: 500 };
+    return res
+      .status(500)
+      .json({ success: false, message: 'Internal server error.' });
   }
 };
 
-exports.getAdmin = async (token) => {
+exports.getAdmin = async (req, res) => {
   try {
-    const { _id } = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await Users.findOne({ _id });
+    if (!req.user) {
+      return res
+        .status(401)
+        .json({ success: false, message: 'You must be logged in.' });
+    }
+
+    const user = await Users.findById(req.user._id);
     if (!user) {
-      return { error: 'User not found.', status: 404 };
+      return res
+        .status(404)
+        .json({ success: false, message: 'User not found.' });
     }
     if (!user.role.includes('admin')) {
       return { error: 'Access denied.', status: 401 };
     }
-    console.log(user, 'user');
+
     return user;
   } catch (error) {
-    console.error('Error retrieving admin:', error);
-    return { error: 'Internal server error.', status: 500 };
+    return res
+      .status(500)
+      .json({ success: false, message: 'Internal server error.' });
   }
 };
