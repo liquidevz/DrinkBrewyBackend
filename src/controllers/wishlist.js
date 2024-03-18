@@ -6,8 +6,9 @@ const  ObjectId =require ('mongodb');
 
 const getWishlist=async(req,res)=> {
   try {
-    const user = await getUser();
-    const wishlist = user.wishlist || [];
+    const user = await getUser(req, res);
+    // const uid = user._id.toString();
+    const wishlist = user.wishlist;
     const products = await Products.aggregate([
       {
         $match: {
@@ -60,9 +61,9 @@ const getWishlist=async(req,res)=> {
 
 const createWishlist=async(req,res)=>{
   try {
-    const user = await getUser();
-    const uid = user._id.toString();
-    const wishlist = user.wishlist || [];
+    const user = await getUser(req, res);
+   const uid = user._id.toString();
+    const wishlist = user.wishlist;
     const { pid } = await req.body;
 
     const isAlready = wishlist.filter((id) => id.toString() === pid);
