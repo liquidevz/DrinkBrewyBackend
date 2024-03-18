@@ -223,11 +223,11 @@ const forgetPassword = async (req, res) => {
     let htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
 
     // Replace the href attribute of the <a> tag with the reset password link
-    htmlContent = htmlContent.replace(
-      /href="javascript:void\(0\);"/g,
-      `href="${resetPasswordLink}"`
-    );
-
+    // htmlContent = htmlContent.replace(
+    //   /href="javascript:void\(0\);"/g,
+    //   `href="${resetPasswordLink}"`
+    // );
+    htmlContent = htmlContent.replace(/href="javascript:void\(0\);"/g, `href="${resetPasswordLink}"`);
     // Create nodemailer transporter
     let transporter = nodemailer.createTransport({
       service: 'gmail',
