@@ -25,7 +25,7 @@ const createOrder = async (req, res) => {
   try {
     const { items, user, paymentMethod, paymentId, couponCode, totalItems } =
       await req.body;
-    const shipping = parseInt(process.env.SHIPPING_FEE);
+    const shipping = parseInt(process.env.SHIPPING_FEE || 0);
 
     if (!items || !items.length) {
       return res
@@ -80,7 +80,7 @@ const createOrder = async (req, res) => {
     discountedTotal = discountedTotal || 0;
 
     const existingUser = await User.findOne({ email: user.email });
-
+    console.log(discountedTotal + shipping, shipping, 'Hello');
     const orderCreated = await Orders.create({
       paymentMethod,
       paymentId,
