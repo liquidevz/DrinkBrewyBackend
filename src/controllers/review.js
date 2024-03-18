@@ -1,9 +1,10 @@
 const Review = require('../models/Review');
 const Products = require('../models/Product');
+const Users = require('../models/User');
 const { getUser } = require('../config/getUser');
 const Orders = require('../models/Order');
 const blurDataUrl = require('../config/getBlurDataURL');
-const getReviews = async (req, res) => {
+const getReviewsbyPid = async (req, res) => {
   try {
     // Populate the product
     const pid = req.params.pid;
@@ -197,7 +198,7 @@ const createReviewForAdmin = async (req, res) => {
 };
 
 module.exports = {
-  getReviews,
+  getReviewsbyPid,
   createReview,
   getReviewsForAdmin,
   createReviewForAdmin,
