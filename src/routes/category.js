@@ -9,11 +9,7 @@ router.post('admin/category', verifyToken, categories.createCategory);
 
 router.get('admin/categories', verifyToken, categories.getCategories);
 
-router.get(
-  '/admin/category/:slug',
-  verifyToken,
-  categories.getCategoryBySlug
-);
+router.get('/admin/category/:slug', verifyToken, categories.getCategoryBySlug);
 
 router.put(
   'admin/category/:slug',
@@ -34,5 +30,6 @@ router.get('/categories/all', categories.getAllCategories);
 router.get('/categories-slugs', categories.getCategoriesSlugs);
 router.get('/subcategories-slugs', categories.getSubCategoriesSlugs);
 router.get('/categories/:slug', categories.getCategoryBySlug);
+router.get('/category-title/:slug', categories.getCategoryNameBySlug);
 
 module.exports = router;

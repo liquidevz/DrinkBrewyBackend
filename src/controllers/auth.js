@@ -156,7 +156,7 @@ const loginUser = async (req, res) => {
           description: 1,
           slug: 1,
           colors: 1,
-          sizes: 1,
+
           sku: 1,
           images: 1,
           gender: 1,
@@ -227,7 +227,10 @@ const forgetPassword = async (req, res) => {
     //   /href="javascript:void\(0\);"/g,
     //   `href="${resetPasswordLink}"`
     // );
-    htmlContent = htmlContent.replace(/href="javascript:void\(0\);"/g, `href="${resetPasswordLink}"`);
+    htmlContent = htmlContent.replace(
+      /href="javascript:void\(0\);"/g,
+      `href="${resetPasswordLink}"`
+    );
     // Create nodemailer transporter
     let transporter = nodemailer.createTransport({
       service: 'gmail',

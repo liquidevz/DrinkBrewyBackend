@@ -80,7 +80,7 @@ const createOrder = async (req, res) => {
     discountedTotal = discountedTotal || 0;
 
     const existingUser = await User.findOne({ email: user.email });
-    console.log(discountedTotal + shipping, shipping, 'Hello');
+
     const orderCreated = await Orders.create({
       paymentMethod,
       paymentId,

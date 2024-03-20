@@ -35,6 +35,8 @@ const getProducts = async (req, res) => {
     const subCategory = await SubCategory.findOne({
       slug: query.subCategory,
     }).select('slug');
+
+    console.log(category, subCategory, 'subCategory');
     const skip = query.limit || 12;
     const totalProducts = await Product.countDocuments({
       ...newQuery,
@@ -75,14 +77,14 @@ const getProducts = async (req, res) => {
       {
         $match: {
           ...(Boolean(query.category) && {
-            'category._id': category._id,
+            category: category._id,
           }),
           ...(Boolean(query.subCategory) && {
-            'subCategory._id': subCategory._id,
+            subCategory: subCategory._id,
           }),
 
           ...(Boolean(query.brand) && {
-            'brand._id': query.brand,
+            brand: query.brand,
           }),
           ...(query.isFeatured && {
             isFeatured: Boolean(query.isFeatured),
@@ -113,12 +115,11 @@ const getProducts = async (req, res) => {
           name: 1,
           slug: 1,
           colors: 1,
-          sizes: 1,
           discount: 1,
           likes: 1,
-          rating: { $avg: '$reviews.rating' }, // Assuming rating is the average of reviews' ratings
           priceSale: 1,
           price: 1,
+          averageRating: 1,
         },
       },
       {
@@ -247,10 +248,11 @@ async function GetAllProductsForAdmin(request, response) {
           name: 1,
           slug: 1,
           colors: 1,
-          sizes: 1,
+
           images: 1,
           priceSale: 1,
           available: 1,
+
           // category: {
           //   _id: 1,
           //   name: 1, // Include the fields you need from the category
@@ -442,7 +444,7 @@ const getFiltersByCategory = async (req, res) => {
     };
     res.status(200).json({
       success: true,
-      data: { filters: response, category: categoryData },
+      data: response,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -497,11 +499,7 @@ const getFiltersBySubCategory = async (req, res) => {
     };
     res.status(200).json({
       success: true,
-      data: {
-        filters: response,
-        category: categoryData,
-        subCategory: subCategoryData,
-      },
+      data: response,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

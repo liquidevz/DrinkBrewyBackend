@@ -112,13 +112,11 @@ const updateSubCategoriesBySlug = async (req, res) => {
       });
     }
 
-    res
-      .status(201)
-      .json({
-        success: true,
-        message: 'subcategories-updated',
-        currentCategory,
-      });
+    res.status(201).json({
+      success: true,
+      message: 'subcategories-updated',
+      currentCategory,
+    });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -161,6 +159,21 @@ const getSubCategories = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+const getSubCategoryNameBySlug = async (req, res) => {
+  try {
+    const subcategory = await SubCategories.findOne({ slug: req.params.slug })
+      .select(['name', 'slug'])
+      .populate({ path: 'parentCategory', select: ['name', 'slug'] });
+
+    res.status(201).json({
+      success: true,
+      data: subcategory,
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
 module.exports = {
   createsubcategories,
   getSubCategories,
@@ -168,4 +181,5 @@ module.exports = {
   getSubCategoriesBySlug,
   updateSubCategoriesBySlug,
   deleteSubCategoriesBySlug,
+  getSubCategoryNameBySlug,
 };

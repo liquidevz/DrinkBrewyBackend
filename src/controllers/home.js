@@ -60,6 +60,7 @@ const getTopProducts = async (req, res) => {
           averageRating: 1,
           priceSale: 1,
           image: 1,
+          colors: 1,
         },
       },
     ]);

@@ -46,5 +46,6 @@ router.get('/subcategories', subcategories.getSubCategories);
 router.get('/subcategories/all', subcategories.getAllSubCategories);
 
 router.get('/subcategories/:slug', subcategories.getSubCategoriesBySlug);
+router.get('/subcategory-title/:slug', subcategories.getSubCategoryNameBySlug);
 
 module.exports = router;
