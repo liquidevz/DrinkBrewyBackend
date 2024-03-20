@@ -1,9 +1,13 @@
-const Review = require('../models/Review');
-const Products = require('../models/Product');
-const Users = require('../models/User');
-const { getUser } = require('../config/getUser');
-const Orders = require('../models/Order');
-const blurDataUrl = require('../config/getBlurDataURL');
+// eslint-disable-next-line no-undef
+const Review = require("../models/Review");
+// eslint-disable-next-line no-undef
+const Products = require("../models/Product");
+// eslint-disable-next-line no-undef
+const { getUser } = require("../config/getUser");
+// eslint-disable-next-line no-undef
+const Orders = require("../models/Order");
+// eslint-disable-next-line no-undef
+const blurDataUrl = require("../config/getBlurDataURL");
 const getReviewsbyPid = async (req, res) => {
   try {
     // Populate the product
@@ -12,28 +16,28 @@ const getReviewsbyPid = async (req, res) => {
     const reviews = await Review.find({
       product: pid,
     }).populate({
-      path: 'user',
-      select: ['firstName', 'lastName', 'cover', 'orders'],
+      path: "user",
+      select: ["firstName", "lastName", "cover", "orders"],
     });
-    const product = await Products.findById(pid).select('slug');
+    const product = await Products.findById(pid).select("slug");
     const reviewsSummery = await Products.aggregate([
       {
         $match: { slug: product.slug },
       },
       {
         $lookup: {
-          from: 'reviews',
-          localField: '_id',
-          foreignField: 'product',
-          as: 'reviews',
+          from: "reviews",
+          localField: "_id",
+          foreignField: "product",
+          as: "reviews",
         },
       },
       {
-        $unwind: '$reviews',
+        $unwind: "$reviews",
       },
       {
         $group: {
-          _id: '$reviews.rating',
+          _id: "$reviews.rating",
           count: { $sum: 1 },
         },
       },
@@ -51,15 +55,15 @@ const createReview = async (req, res) => {
     const { pid, rating, review: reviewText, images } = req.body;
 
     const orders = await Orders.find({
-      'user.email': user.email,
-      'items.pid': pid,
+      "user.email": user.email,
+      "items.pid": pid,
     });
 
     const updatedImages = await Promise.all(
       images.map(async (image) => {
         const blurDataURL = await blurDataUrl(image);
         return { url: image, blurDataURL };
-      })
+      }),
     );
     const review = await Review.create({
       product: pid,
@@ -85,7 +89,7 @@ const createReview = async (req, res) => {
 const getReviewsForAdmin = async (req, res) => {
   try {
     const reviews = await Review.find(
-      {}
+      {},
     ); /* find all the data in our database */
     return res.status(200).json({ success: true, data: reviews });
   } catch (error) {
@@ -108,15 +112,15 @@ const createReviewForAdmin = async (req, res) => {
       {
         new: true,
         runValidators: true,
-      }
+      },
     );
 
     if (isReview) {
       const filtered = isReview.ratings.filter(
-        (v) => v.name === `${review.rating} Star`
+        (v) => v.name === `${review.rating} Star`,
       )[0];
       const notFiltered = isReview.ratings.filter(
-        (v) => v.name !== `${review.rating} Star`
+        (v) => v.name !== `${review.rating} Star`,
       );
 
       const alreadyReview = await Review.findByIdAndUpdate(
@@ -135,44 +139,44 @@ const createReviewForAdmin = async (req, res) => {
         {
           new: true,
           runValidators: true,
-        }
+        },
       );
 
       return res.status(400).json({ success: true, data: alreadyReview });
     } else {
       const ratingData = [
         {
-          name: '1 Star',
+          name: "1 Star",
           starCount: 0,
           reviewCount: 0,
         },
         {
-          name: '2 Star',
+          name: "2 Star",
           starCount: 0,
           reviewCount: 0,
         },
         {
-          name: '3 Star',
+          name: "3 Star",
           starCount: 0,
           reviewCount: 0,
         },
         {
-          name: '4 Star',
+          name: "4 Star",
           starCount: 0,
           reviewCount: 0,
         },
         {
-          name: '5 Star',
+          name: "5 Star",
           starCount: 0,
           reviewCount: 0,
         },
       ];
 
       const filtered = ratingData.filter(
-        (v) => v.name === `${review.rating} Star`
+        (v) => v.name === `${review.rating} Star`,
       )[0];
       const notFiltered = ratingData.filter(
-        (v) => v.name !== `${review.rating} Star`
+        (v) => v.name !== `${review.rating} Star`,
       );
 
       const newReview = await Review.create([
@@ -193,10 +197,11 @@ const createReviewForAdmin = async (req, res) => {
       return res.status(201).json({ success: true, data: newReview });
     }
   } catch (error) {
-    return res.status(400).json({ success: false, error: message.error });
+    // eslint-disable-next-line no-undef
+    return res.status(400).json({ success: false, message: message.error });
   }
 };
-
+// eslint-disable-next-line no-undef
 module.exports = {
   getReviewsbyPid,
   createReview,

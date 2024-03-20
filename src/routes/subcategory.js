@@ -1,50 +1,53 @@
-const express = require('express');
+// eslint-disable-next-line no-undef
+const express = require("express");
 const router = express.Router();
-const subcategories = require('../controllers/subcategory');
+// eslint-disable-next-line no-undef
+const subcategories = require("../controllers/subcategory");
 
-// Import verifyToken function
-const verifyToken = require('../config/jwt');
+// eslint-disable-next-line no-undef
+const verifyToken = require("../config/jwt");
 
 router.post(
-  'admin/subcategory',
+  "admin/subcategory",
   verifyToken,
-  subcategories.createsubcategories
+  subcategories.createsubcategories,
 );
 
 router.get(
-  '/admin/subcategories',
+  "/admin/subcategories",
   verifyToken,
-  subcategories.getAllSubCategories
+  subcategories.getAllSubCategories,
 );
 
 router.get(
-  '/admin/subcategory/:slug',
+  "/admin/subcategory/:slug",
   verifyToken,
-  subcategories.getSubCategoriesBySlug
+  subcategories.getSubCategoriesBySlug,
 );
 
 router.put(
-  '/admin/subcategory/:slug',
+  "/admin/subcategory/:slug",
   verifyToken,
-  subcategories.updateSubCategoriesBySlug
+  subcategories.updateSubCategoriesBySlug,
 );
 
 router.delete(
-  '/admin/subcategory/:slug',
+  "/admin/subcategory/:slug",
   verifyToken,
-  subcategories.deleteSubCategoriesBySlug
+  subcategories.deleteSubCategoriesBySlug,
 );
 router.get(
-  '/admin/subcategories/all',
+  "/admin/subcategories/all",
   verifyToken,
-  subcategories.getSubCategories
+  subcategories.getSubCategories,
 );
 
 // User routes
 
-router.get('/subcategories', subcategories.getSubCategories);
-router.get('/subcategories/all', subcategories.getAllSubCategories);
+router.get("/subcategories", subcategories.getSubCategories);
+router.get("/subcategories/all", subcategories.getAllSubCategories);
 
-router.get('/subcategories/:slug', subcategories.getSubCategoriesBySlug);
+router.get("/subcategories/:slug", subcategories.getSubCategoriesBySlug);
 
+// eslint-disable-next-line no-undef
 module.exports = router;

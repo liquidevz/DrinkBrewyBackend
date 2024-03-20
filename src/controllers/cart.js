@@ -1,31 +1,34 @@
+// eslint-disable-next-line no-undef
+const Products = require("../models/Product");
 
-const Products =require ('../models/Product');
-
-const createCart=async (request,response)=> {
+const createCart = async (request, response) => {
   try {
-
     const req = await request.body;
     const cartItems = [];
 
     for (const item of req.products) {
       const product = await Products.findById(item.pid).select([
-        'cover',
-        'name',
-        'brand',
-        'slug',
-        'available',
-        'images',
-        'price',
-        'priceSale'
+        "cover",
+        "name",
+        "brand",
+        "slug",
+        "available",
+        "images",
+        "price",
+        "priceSale",
       ]);
 
       if (!product) {
         // Handle product not found
-        return response.status(404).json({ success: false, message: 'Products Not Found' });
+        return response
+          .status(404)
+          .json({ success: false, message: "Products Not Found" });
       }
       const { quantity, color, size, sku } = item;
       if (product.available < quantity) {
-        return response.status(400).json({ success: false, message: 'No Products in Stock' });
+        return response
+          .status(400)
+          .json({ success: false, message: "No Products in Stock" });
       }
 
       const subtotal = (product.priceSale || product.price) * quantity;
@@ -38,18 +41,19 @@ const createCart=async (request,response)=> {
         size,
         color,
         subtotal: subtotal.toFixed(2),
-        sku: sku
+        sku: sku,
       });
     }
 
-    return response.status(200).json(
-      {
-        success: true,
-        data: cartItems
-      }
-    );
+    return response.status(200).json({
+      success: true,
+      data: cartItems,
+    });
   } catch (error) {
-    return response.status(400).json({ success: false, message: error.message });
+    return response
+      .status(400)
+      .json({ success: false, message: error.message });
   }
-}
-module.exports={createCart}
+};
+// eslint-disable-next-line no-undef
+module.exports = { createCart };

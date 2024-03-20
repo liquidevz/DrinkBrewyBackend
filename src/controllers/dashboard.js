@@ -1,8 +1,11 @@
-// controllers/newsController.js
-const Order = require('../models/Order');
-const User = require('../models/User');
-const Product = require('../models/Product');
-const Notifications = require('../models/Notification');
+// eslint-disable-next-line no-undef
+const Order = require("../models/Order");
+// eslint-disable-next-line no-undef
+const User = require("../models/User");
+// eslint-disable-next-line no-undef
+const Product = require("../models/Product");
+// eslint-disable-next-line no-undef
+const Notifications = require("../models/Notification");
 
 const calculateExpirationDate = (days) => {
   const now = new Date();
@@ -20,73 +23,73 @@ const getDashboardAnalytics = async (req, res) => {
       [...new Array(12)].map(
         (_, i) =>
           ordersByYears?.filter(
-            (v) => new Date(v.createdAt).getMonth() + 1 === i + 1
-          ).length
+            (v) => new Date(v.createdAt).getMonth() + 1 === i + 1,
+          ).length,
       );
 
     const getIncomeReport = (prop, ordersByYears) => {
       const newData = ordersByYears.filter((item) =>
-        prop === 'year'
+        prop === "year"
           ? true
-          : prop === 'week'
-          ? new Date(item.createdAt).getMonth() === new Date().getMonth() &&
-            new Date(item.createdAt).getTime() > getLastWeeksDate().getTime()
-          : new Date(item.createdAt).getMonth() === new Date().getMonth()
+          : prop === "week"
+            ? new Date(item.createdAt).getMonth() === new Date().getMonth() &&
+              new Date(item.createdAt).getTime() > getLastWeeksDate().getTime()
+            : new Date(item.createdAt).getMonth() === new Date().getMonth(),
       );
 
       return [
         ...new Array(
-          prop === 'week'
+          prop === "week"
             ? 7
-            : prop === 'year'
-            ? 12
-            : getDaysInMonth(
-                new Date().getMonth() + 1,
-                new Date().getFullYear()
-              )
+            : prop === "year"
+              ? 12
+              : getDaysInMonth(
+                  new Date().getMonth() + 1,
+                  new Date().getFullYear(),
+                ),
         ),
       ].map((_, i) =>
-        prop === 'week'
+        prop === "week"
           ? newData
               ?.filter(
                 (v) =>
                   new Date(v.createdAt).getDate() ===
                     getLastWeeksDate().getDate() + 1 + i &&
-                  v.status !== 'cancelled' &&
-                  v.status !== 'returned'
+                  v.status !== "cancelled" &&
+                  v.status !== "returned",
               )
               .reduce((partialSum, a) => partialSum + Number(a.total), 0)
-          : prop === 'year'
-          ? newData
-              ?.filter(
-                (v) =>
-                  new Date(v.createdAt).getMonth() === i &&
-                  v.status !== 'cancelled' &&
-                  v.status !== 'returned'
-              )
-              .reduce((partialSum, a) => partialSum + Number(a.total), 0)
-          : newData
-              ?.filter(
-                (v) =>
-                  new Date(v.createdAt).getDate() === i + 1 &&
-                  v.status !== 'cancelled' &&
-                  v.status !== 'returned'
-              )
-              .reduce((partialSum, a) => partialSum + Number(a.total), 0)
+          : prop === "year"
+            ? newData
+                ?.filter(
+                  (v) =>
+                    new Date(v.createdAt).getMonth() === i &&
+                    v.status !== "cancelled" &&
+                    v.status !== "returned",
+                )
+                .reduce((partialSum, a) => partialSum + Number(a.total), 0)
+            : newData
+                ?.filter(
+                  (v) =>
+                    new Date(v.createdAt).getDate() === i + 1 &&
+                    v.status !== "cancelled" &&
+                    v.status !== "returned",
+                )
+                .reduce((partialSum, a) => partialSum + Number(a.total), 0),
       );
     };
 
-    const users = await User.find({}).select('createdAt');
+    const users = await User.find({}).select("createdAt");
     const totalProducts = await Product.countDocuments({});
     const lastYearDate = calculateExpirationDate(-365).getTime();
     const todayDate = new Date().getTime();
     const ordersByYears = await Order.find({
       createdAt: { $gt: lastYearDate, $lt: todayDate },
-    }).select(['createdAt', 'status', 'total']);
+    }).select(["createdAt", "status", "total"]);
     const todaysOrders = ordersByYears.filter(
       (v) =>
         new Date(v.createdAt).toLocaleDateString() ===
-        new Date().toLocaleDateString()
+        new Date().toLocaleDateString(),
     );
     // Fetching best-selling products
     const bestSellingProducts = await Product.find()
@@ -97,25 +100,26 @@ const getDashboardAnalytics = async (req, res) => {
       salesReport: getOrdersReport(ordersByYears),
       bestSellingProducts: bestSellingProducts,
       ordersReport: [
-        'pending',
-        'ontheway',
-        'delivered',
-        'returned',
-        'cancelled',
+        "pending",
+        "ontheway",
+        "delivered",
+        "returned",
+        "cancelled",
       ].map(
-        (status) => ordersByYears.filter((v) => v.status === status).length
+        (status) => ordersByYears.filter((v) => v.status === status).length,
       ),
       incomeReport: {
-        week: getIncomeReport('week', ordersByYears),
-        month: getIncomeReport('month', ordersByYears),
-        year: getIncomeReport('year', ordersByYears),
+        week: getIncomeReport("week", ordersByYears),
+        month: getIncomeReport("month", ordersByYears),
+        year: getIncomeReport("year", ordersByYears),
       },
       users: users.length,
       totalProducts,
       dailyOrders: todaysOrders.length,
       dailyEarning: todaysOrders
         .filter(
-          (order) => order.status !== 'cancelled' && order.status !== 'returned'
+          (order) =>
+            order.status !== "cancelled" && order.status !== "returned",
         )
         .reduce((partialSum, order) => partialSum + Number(order.total), 0),
     };
@@ -123,7 +127,7 @@ const getDashboardAnalytics = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Internal Server Error',
+      message: "Internal Server Error",
       error: error.message,
     });
   }
@@ -165,12 +169,12 @@ const getNofications = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Internal Server Error',
+      message: "Internal Server Error",
       error: error.message,
     });
   }
 };
-
+// eslint-disable-next-line no-undef
 module.exports = {
   getDashboardAnalytics,
   getNofications,

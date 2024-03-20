@@ -1,7 +1,9 @@
-const Brands = require('../models/Brand');
-const getBlurDataURL = require('../config/getBlurDataURL');
-const {singleFileDelete} = require('../config/uploader');
-
+// eslint-disable-next-line no-undef
+const Brands = require("../models/Brand");
+// eslint-disable-next-line no-undef
+const getBlurDataURL = require("../config/getBlurDataURL");
+// eslint-disable-next-line no-undef
+const { singleFileDelete } = require("../config/uploader");
 
 const createBrand = async (req, res) => {
   try {
@@ -9,7 +11,7 @@ const createBrand = async (req, res) => {
 
     // Validate if the 'logo' property and its 'url' property exist in the request body
     if (!logo || !logo.url) {
-      return res.status(400).json({ message: 'Invalid logo data' });
+      return res.status(400).json({ message: "Invalid logo data" });
     }
 
     // Validate if the 'blurDataURL' property exists in the logo object
@@ -29,13 +31,12 @@ const createBrand = async (req, res) => {
 
     res
       .status(201)
-      .json({ success: true, data: newBrand, message: 'Brand created' });
+      .json({ success: true, data: newBrand, message: "Brand created" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-module.exports = createBrand;
 
 const getAllBrands = async (req, res) => {
   try {
@@ -48,7 +49,7 @@ const getAllBrands = async (req, res) => {
       data: brands,
     });
   } catch (error) {
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -58,7 +59,7 @@ const getBrandBySlug = async (req, res) => {
     const brand = await Brands.findOne({ slug });
 
     if (!brand) {
-      return res.status(404).json({ message: 'Brand not found' });
+      return res.status(404).json({ message: "Brand not found" });
     }
 
     res.status(201).json({
@@ -91,16 +92,16 @@ const updateBrandBySlug = async (req, res) => {
       {
         new: true,
         runValidators: true,
-      }
+      },
     );
 
     if (!updatedBrand) {
-      return res.status(404).json({ message: 'Brand not found' });
+      return res.status(404).json({ message: "Brand not found" });
     }
 
     res
       .status(201)
-      .json({ success: true, data: updatedBrand, message: 'Brand updated' });
+      .json({ success: true, data: updatedBrand, message: "Brand updated" });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -112,7 +113,7 @@ const deleteBrandBySlug = async (req, res) => {
     const brand = await Brands.findOne({ slug });
 
     if (!brand) {
-      return res.status(404).json({ message: 'Brand not found' });
+      return res.status(404).json({ message: "Brand not found" });
     }
 
     // Uncomment the line below if you have a function to delete the logo file
@@ -120,7 +121,7 @@ const deleteBrandBySlug = async (req, res) => {
 
     await Brands.deleteOne({ slug });
 
-    res.status(201).json({ success: true, message: 'Brand deleted' });
+    res.status(201).json({ success: true, message: "Brand deleted" });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -137,10 +138,10 @@ const getBrands = async (req, res) => {
       data: brands,
     });
   } catch (error) {
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
+// eslint-disable-next-line no-undef
 module.exports = {
   createBrand,
   getAllBrands,

@@ -1,21 +1,24 @@
-// controllers/newsController.js
-const BrandModel = require('../models/Brand');
-const Category = require('../models/Category');
-const Product = require('../models/Product');
+
+// eslint-disable-next-line no-undef
+const BrandModel = require("../models/Brand");
+// eslint-disable-next-line no-undef
+const Category = require("../models/Category");
+// eslint-disable-next-line no-undef
+const Product = require("../models/Product");
 
 const getCategories = async (req, res) => {
   try {
     const categories = await Category.find().select([
-      'name',
-      'cover',
-      'slug',
-      'status',
+      "name",
+      "cover",
+      "slug",
+      "status",
     ]);
     res.status(201).json({ success: true, data: categories });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Internal Server Error',
+      message: "Internal Server Error",
       error: error.message,
     });
   }
@@ -26,16 +29,16 @@ const getTopProducts = async (req, res) => {
     const bestSellingProduct = await Product.aggregate([
       {
         $lookup: {
-          from: 'reviews',
-          localField: 'reviews',
-          foreignField: '_id',
-          as: 'reviews',
+          from: "reviews",
+          localField: "reviews",
+          foreignField: "_id",
+          as: "reviews",
         },
       },
       {
         $addFields: {
-          averageRating: { $avg: '$reviews.rating' },
-          image: { $arrayElemAt: ['$images', 0] },
+          averageRating: { $avg: "$reviews.rating" },
+          image: { $arrayElemAt: ["$images", 0] },
         },
       },
       {
@@ -58,7 +61,6 @@ const getTopProducts = async (req, res) => {
           priceSale: 1,
           available: 1,
           averageRating: 1,
-          priceSale: 1,
           image: 1,
         },
       },
@@ -67,7 +69,7 @@ const getTopProducts = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Internal Server Error',
+      message: "Internal Server Error",
       error: error.message,
     });
   }
@@ -76,21 +78,22 @@ const getTopProducts = async (req, res) => {
 const getBrands = async (req, res) => {
   try {
     const brands = await BrandModel.find().select([
-      'name',
-      'logo',
-      'slug',
-      'status',
+      "name",
+      "logo",
+      "slug",
+      "status",
     ]);
 
     res.status(201).json({ success: true, data: brands });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Internal Server Error',
+      message: "Internal Server Error",
       error: error.message,
     });
   }
 };
+// eslint-disable-next-line no-undef
 module.exports = {
   getCategories,
   getTopProducts,

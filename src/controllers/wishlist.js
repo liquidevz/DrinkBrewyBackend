@@ -1,9 +1,12 @@
-
-const Products =require ('../models/Product');
-const Users =require ('../models/User');
-const { getUser } = require('../config/getUser');
-const { ObjectId } = require('mongoose').Types;
-const getWishlist=async(req,res)=> {
+// eslint-disable-next-line no-undef
+const Products = require("../models/Product");
+// eslint-disable-next-line no-undef
+const Users = require("../models/User");
+// eslint-disable-next-line no-undef
+const { getUser } = require("../config/getUser");
+// eslint-disable-next-line no-undef
+const { ObjectId } = require("mongoose").Types;
+const getWishlist = async (req, res) => {
   try {
     const user = await getUser(req, res);
     //  Fetch wishlist and related products
@@ -11,21 +14,21 @@ const getWishlist=async(req,res)=> {
     const products = await Products.aggregate([
       {
         $match: {
-          _id: { $in: wishlist } // Match products with IDs present in the wishlist
-        }
+          _id: { $in: wishlist }, // Match products with IDs present in the wishlist
+        },
       },
       {
         $lookup: {
-          from: 'reviews',
-          localField: 'reviews',
-          foreignField: '_id',
-          as: 'reviews'
-        }
+          from: "reviews",
+          localField: "reviews",
+          foreignField: "_id",
+          as: "reviews",
+        },
       },
       {
         $addFields: {
-          averageRating: { $avg: '$reviews.rating' }
-        }
+          averageRating: { $avg: "$reviews.rating" },
+        },
       },
       {
         $project: {
@@ -42,41 +45,39 @@ const getWishlist=async(req,res)=> {
           available: 1,
           priceSale: 1,
           price: 1,
-          averageRating: 1
-        }
-      }
+          averageRating: 1,
+        },
+      },
     ]);
-  
+
     return res.status(200).json({
       success: true,
-      data: products
+      data: products,
     });
   } catch (error) {
-    console.error('Error fetching wishlist:', error);
+    console.error("Error fetching wishlist:", error);
     return res.status(400).json({ success: false, message: error.message });
   }
+};
 
-  
-}
-
-const createWishlist=async(req,res)=>{
+const createWishlist = async (req, res) => {
   try {
     const user = await getUser(req, res);
     const uid = user._id.toString();
-     const {pid}=await req.body;
+    const { pid } = await req.body;
     const wishlist = user.wishlist;
 
     const isAlready = wishlist.filter((id) => id.toString() === pid);
 
-    if (!Boolean(isAlready.length)) {
+    if (!isAlready.length) {
       await Users.findByIdAndUpdate(
         uid,
         { $addToSet: { wishlist: pid } }, // Add productId to the wishlist if not already present
-        { new: true }
+        { new: true },
       );
 
       await Products.findByIdAndUpdate(pid, {
-        $inc: { likes: 1 }
+        $inc: { likes: 1 },
       });
 
       const newWishlist = [...wishlist, new ObjectId(pid)];
@@ -84,21 +85,21 @@ const createWishlist=async(req,res)=>{
       const products = await Products.aggregate([
         {
           $match: {
-            _id: { $in: newWishlist } // Match products with IDs present in the productsId array
-          }
+            _id: { $in: newWishlist }, // Match products with IDs present in the productsId array
+          },
         },
         {
           $lookup: {
-            from: 'reviews',
-            localField: 'reviews',
-            foreignField: '_id',
-            as: 'reviews'
-          }
+            from: "reviews",
+            localField: "reviews",
+            foreignField: "_id",
+            as: "reviews",
+          },
         },
         {
           $addFields: {
-            averageRating: { $avg: '$reviews.rating' }
-          }
+            averageRating: { $avg: "$reviews.rating" },
+          },
         },
         {
           $project: {
@@ -115,45 +116,47 @@ const createWishlist=async(req,res)=>{
             available: 1,
             priceSale: 1,
             price: 1,
-            averageRating: 1
-          }
-        }
+            averageRating: 1,
+          },
+        },
       ]);
 
-      return res.status(201).json(
-        {
-          success: true,
-          data: products,
-          type: 'pushed',
-          message: 'Added to wishlist'
-        }
-      );
+      return res.status(201).json({
+        success: true,
+        data: products,
+        type: "pushed",
+        message: "Added to wishlist",
+      });
     }
     await Products.findByIdAndUpdate(pid, {
-      $inc: { likes: -1 }
+      $inc: { likes: -1 },
     });
 
-    await Users.findByIdAndUpdate(uid, { $pull: { wishlist: pid } }, { new: true });
+    await Users.findByIdAndUpdate(
+      uid,
+      { $pull: { wishlist: pid } },
+      { new: true },
+    );
 
     const removedWishlist = wishlist.filter((id) => id.toString() !== pid);
     const products = await Products.aggregate([
       {
         $match: {
-          _id: { $in: removedWishlist } // Match products with IDs present in the productsId array
-        }
+          _id: { $in: removedWishlist }, // Match products with IDs present in the productsId array
+        },
       },
       {
         $lookup: {
-          from: 'reviews',
-          localField: 'reviews',
-          foreignField: '_id',
-          as: 'reviews'
-        }
+          from: "reviews",
+          localField: "reviews",
+          foreignField: "_id",
+          as: "reviews",
+        },
       },
       {
         $addFields: {
-          averageRating: { $avg: '$reviews.rating' }
-        }
+          averageRating: { $avg: "$reviews.rating" },
+        },
       },
       {
         $project: {
@@ -170,24 +173,22 @@ const createWishlist=async(req,res)=>{
           available: 1,
           priceSale: 1,
           price: 1,
-          averageRating: 1
-        }
-      }
+          averageRating: 1,
+        },
+      },
     ]);
-    return res.status(200).json(
-      {
-        success: true,
-        type: 'pulled',
-        message: 'Removed From Wishlist',
-        data: products
-      }
-    );
+    return res.status(200).json({
+      success: true,
+      type: "pulled",
+      message: "Removed From Wishlist",
+      data: products,
+    });
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });
   }
-
-}
-module.exports={
-    getWishlist,
-    createWishlist
-}
+};
+// eslint-disable-next-line no-undef
+module.exports = {
+  getWishlist,
+  createWishlist,
+};

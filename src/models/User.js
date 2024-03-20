@@ -1,31 +1,33 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+// eslint-disable-next-line no-undef
+const mongoose = require("mongoose");
+// eslint-disable-next-line no-undef
+const bcrypt = require("bcrypt");
 
 const UserSchema = new mongoose.Schema(
   {
     firstName: {
       type: String,
-      required: [true, 'Please enter a firstName'],
+      required: [true, "Please enter a firstName"],
     },
     lastName: {
       type: String,
-      required: [true, 'Please enter a lastName'],
+      required: [true, "Please enter a lastName"],
     },
     email: {
       type: String,
-      required: [true, 'Please enter an email'],
+      required: [true, "Please enter an email"],
       unique: true,
     },
     password: {
       type: String,
       select: false,
-      required: [true, 'Please enter a password'],
+      required: [true, "Please enter a password"],
       minlength: 8,
     },
     gender: {
       type: String,
-      enum: ['male', 'female', 'other'],
-      required: [true, 'Please enter a gender'],
+      enum: ["male", "female", "other"],
+      required: [true, "Please enter a gender"],
     },
     cover: {
       _id: {
@@ -39,25 +41,25 @@ const UserSchema = new mongoose.Schema(
     wishlist: [
       {
         type: mongoose.Types.ObjectId,
-        ref: 'Product',
+        ref: "Product",
       },
     ],
     orders: [
       {
         type: mongoose.Types.ObjectId,
-        ref: 'Order',
+        ref: "Order",
       },
     ],
     recentProducts: [
       {
         type: mongoose.Types.ObjectId,
-        ref: 'Product',
+        ref: "Product",
       },
     ],
     phone: {
       type: String,
-      required: [true, 'Please provide a Phone Number.'],
-      maxlength: [20, 'Phone cannot be more than 20 characters.'],
+      required: [true, "Please provide a Phone Number."],
+      maxlength: [20, "Phone cannot be more than 20 characters."],
     },
 
     status: {
@@ -94,19 +96,19 @@ const UserSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['super admin', 'admin', 'user'],
+      enum: ["super admin", "admin", "user"],
       required: true,
     },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 // Hash the password before saving
-UserSchema.pre('save', async function (next) {
+UserSchema.pre("save", async function (next) {
   try {
-    if (!this.isModified('password')) {
+    if (!this.isModified("password")) {
       return next();
     }
 
@@ -118,5 +120,6 @@ UserSchema.pre('save', async function (next) {
   }
 });
 
-const User = mongoose.models.User || mongoose.model('User', UserSchema);
+const User = mongoose.models.User || mongoose.model("User", UserSchema);
+// eslint-disable-next-line no-undef
 module.exports = User;

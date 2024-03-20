@@ -1,8 +1,11 @@
-const User = require('../models/User');
-const Categories = require('../models/Category');
-const SubCategories = require('../models/SubCategory');
-
-const getBlurDataURL = require('../config/getBlurDataURL');
+// eslint-disable-next-line no-undef
+const User = require("../models/User");
+// eslint-disable-next-line no-undef
+const Categories = require("../models/Category");
+// eslint-disable-next-line no-undef
+const SubCategories = require("../models/SubCategory");
+// eslint-disable-next-line no-undef
+const getBlurDataURL = require("../config/getBlurDataURL");
 
 const createCategory = async (req, res) => {
   try {
@@ -20,7 +23,7 @@ const createCategory = async (req, res) => {
       },
     });
 
-    res.status(201).json({ success: true, message: 'category-created' });
+    res.status(201).json({ success: true, message: "category-created" });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -34,8 +37,8 @@ const getAllCategories = async (req, res) => {
       .sort({
         createdAt: -1,
       })
-      .select(['name', 'slug', 'subCategories'])
-      .populate({ path: 'subCategories', select: ['name', 'slug'] });
+      .select(["name", "slug", "subCategories"])
+      .populate({ path: "subCategories", select: ["name", "slug"] });
 
     res.status(201).json({
       success: true,
@@ -53,22 +56,22 @@ const getCategoryBySlug = async (req, res) => {
   try {
     const { slug } = req.params;
     const category = await Categories.findOne({ slug }).select([
-      'metaTitle',
-      'metaDescription',
-      'cover.url',
-      'slug',
+      "metaTitle",
+      "metaDescription",
+      "cover.url",
+      "slug",
     ]);
 
     if (!category) {
       return res.status(400).json({
-        message: 'item-could-not-be-found',
+        message: "item-could-not-be-found",
       });
     }
 
     res.status(201).json({ success: true, data: category });
   } catch (error) {
     res.status(400).json({
-      message: 'category-could-not-be-found',
+      message: "category-could-not-be-found",
     });
   }
 };
@@ -89,10 +92,10 @@ const updateCategoryBySlug = async (req, res) => {
           ...cover,
         },
       },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
 
-    res.status(201).json({ success: true, message: 'category-updated' });
+    res.status(201).json({ success: true, message: "category-updated" });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -107,34 +110,34 @@ const deleteCategoryBySlug = async (req, res) => {
     if (!category) {
       return res.status(400).json({
         success: false,
-        message: 'category-could-not-be-found',
+        message: "category-could-not-be-found",
       });
     }
 
     res
       .status(201)
-      .json({ success: true, message: 'category deleted successfully' });
+      .json({ success: true, message: "category deleted successfully" });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 const getCategories = async (req, res) => {
   try {
-    const { limit = 10, page = 1, search = '' } = req.query;
+    const { limit = 10, page = 1, search = "" } = req.query;
 
     const skip = parseInt(limit) || 10;
     const totalCategories = await Categories.find({
-      name: { $regex: search, $options: 'i' },
+      name: { $regex: search, $options: "i" },
     });
     const categories = await Categories.find(
       {
-        name: { $regex: search, $options: 'i' },
+        name: { $regex: search, $options: "i" },
       },
       null,
       {
         skip: skip * (parseInt(page) - 1 || 0),
         limit: skip,
-      }
+      },
     ).sort({
       createdAt: -1,
     });
@@ -150,7 +153,7 @@ const getCategories = async (req, res) => {
 };
 const getCategoriesSlugs = async (req, res) => {
   try {
-    const categories = await Categories.find().select('slug');
+    const categories = await Categories.find().select("slug");
 
     res.status(201).json({
       success: true,
@@ -163,8 +166,8 @@ const getCategoriesSlugs = async (req, res) => {
 const getSubCategoriesSlugs = async (req, res) => {
   try {
     const categories = await SubCategories.find()
-      .select('slug')
-      .populate({ path: 'parentCategory', select: ['slug'] });
+      .select("slug")
+      .populate({ path: "parentCategory", select: ["slug"] });
 
     res.status(201).json({
       success: true,
@@ -174,6 +177,7 @@ const getSubCategoriesSlugs = async (req, res) => {
     res.status(400).json({ success: false, message: error.message });
   }
 };
+// eslint-disable-next-line no-undef
 module.exports = {
   createCategory,
   getCategories,

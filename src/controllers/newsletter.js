@@ -1,5 +1,4 @@
-const express = require("express");
-const mongoose = require("mongoose");
+// eslint-disable-next-line no-undef
 const Newsletter = require("../models/Newsletter");
 
 const getNewsletters = async (req, res) => {
@@ -47,6 +46,7 @@ const createNewsletter = async (req, res) => {
     });
   }
 };
+// eslint-disable-next-line no-undef
 module.exports = {
   getNewsletters,
   createNewsletter,

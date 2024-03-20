@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+// eslint-disable-next-line no-undef
+const mongoose = require("mongoose");
 
 const productSchema = new mongoose.Schema(
   {
@@ -16,7 +17,7 @@ const productSchema = new mongoose.Schema(
     },
     brand: {
       type: mongoose.Types.ObjectId,
-      ref: 'Brand',
+      ref: "Brand",
     },
     likes: {
       type: Number,
@@ -36,13 +37,13 @@ const productSchema = new mongoose.Schema(
     },
     category: {
       type: mongoose.Types.ObjectId,
-      ref: 'Category',
-      required: [true, 'please provide a category id'],
+      ref: "Category",
+      required: [true, "please provide a category id"],
     },
     subCategory: {
       type: mongoose.Types.ObjectId,
-      ref: 'SubCategory',
-      required: [true, 'please provide a sub category id'],
+      ref: "SubCategory",
+      required: [true, "please provide a sub category id"],
     },
     gender: {
       type: String,
@@ -50,19 +51,19 @@ const productSchema = new mongoose.Schema(
     tags: [String],
     sku: {
       type: String,
-      required: [true, 'SKU is required.'],
+      required: [true, "SKU is required."],
     },
     price: {
       type: Number,
-      required: [true, 'Price is required.'],
+      required: [true, "Price is required."],
     },
     priceSale: {
       type: Number,
-      required: [true, 'Sale price is required.'],
+      required: [true, "Sale price is required."],
     },
     available: {
       type: Number,
-      required: [true, 'Available quantity is required.'],
+      required: [true, "Available quantity is required."],
     },
     sold: {
       type: Number,
@@ -71,7 +72,7 @@ const productSchema = new mongoose.Schema(
     reviews: [
       {
         type: mongoose.Types.ObjectId,
-        ref: 'Review',
+        ref: "Review",
       },
     ],
     images: [
@@ -86,17 +87,18 @@ const productSchema = new mongoose.Schema(
         },
         blurDataURL: {
           type: String,
-          required: [true, 'image-blur-data-url-required-error']
-        }
+          required: [true, "image-blur-data-url-required-error"],
+        },
       },
     ],
 
     colors: [String],
     sizes: [String],
   },
-  { timestamps: true, strict: true }
+  { timestamps: true, strict: true },
 );
 
 const Product =
-  mongoose.models.Product || mongoose.model('Product', productSchema);
+  mongoose.models.Product || mongoose.model("Product", productSchema);
+  // eslint-disable-next-line no-undef
 module.exports = Product;

@@ -1,11 +1,19 @@
-const Notifications = require('../models/Notification');
-const Products = require('../models/Product');
-const Orders = require('../models/Order');
-const Coupons = require('../models/CouponCode');
-const User = require('../models/User');
-const nodemailer = require('nodemailer');
-const fs = require('fs');
-const path = require('path');
+// eslint-disable-next-line no-undef
+const Notifications = require("../models/Notification");
+// eslint-disable-next-line no-undef
+const Products = require("../models/Product");
+// eslint-disable-next-line no-undef
+const Orders = require("../models/Order");
+// eslint-disable-next-line no-undef
+const Coupons = require("../models/CouponCode");
+// eslint-disable-next-line no-undef
+const User = require("../models/User");
+// eslint-disable-next-line no-undef
+const nodemailer = require("nodemailer");
+// eslint-disable-next-line no-undef
+const fs = require("fs");
+// eslint-disable-next-line no-undef
+const path = require("path");
 
 function isExpired(expirationDate) {
   const currentDateTime = new Date();
@@ -14,23 +22,25 @@ function isExpired(expirationDate) {
 
 function readHTMLTemplate() {
   const htmlFilePath = path.join(
+      // eslint-disable-next-line no-undef
     process.cwd(),
-    'src/email-templates',
-    'order.html'
+    "src/email-templates",
+    "order.html",
   );
-  return fs.readFileSync(htmlFilePath, 'utf8');
+  return fs.readFileSync(htmlFilePath, "utf8");
 }
 
 const createOrder = async (req, res) => {
   try {
     const { items, user, paymentMethod, paymentId, couponCode, totalItems } =
       await req.body;
+          // eslint-disable-next-line no-undef
     const shipping = parseInt(process.env.SHIPPING_FEE);
 
     if (!items || !items.length) {
       return res
         .status(400)
-        .json({ success: false, message: 'Please provide item(s)' });
+        .json({ success: false, message: "Please provide item(s)" });
     }
 
     const products = await Products.find({
@@ -45,13 +55,13 @@ const createOrder = async (req, res) => {
       Products.findOneAndUpdate(
         { _id: item.pid, available: { $gte: 0 } },
         { $inc: { available: -item.quantity, sold: item.quantity } },
-        { new: true, runValidators: true }
+        { new: true, runValidators: true },
       ).exec();
 
       return {
         ...item,
         total,
-        imageUrl: product.images.length > 0 ? product.images[0].url : '',
+        imageUrl: product.images.length > 0 ? product.images[0].url : "",
       };
     });
 
@@ -65,10 +75,10 @@ const createOrder = async (req, res) => {
       if (expired) {
         return res
           .status(400)
-          .json({ success: false, message: 'Coupon code is expired' });
+          .json({ success: false, message: "Coupon code is expired" });
       }
 
-      if (couponData && couponData.type === 'percent') {
+      if (couponData && couponData.type === "percent") {
         const percentLess = couponData.discount;
         discount = (percentLess / 100) * grandTotal;
       } else if (couponData) {
@@ -91,7 +101,7 @@ const createOrder = async (req, res) => {
       items: updatedItems,
       user: existingUser ? { ...user, _id: existingUser._id } : user,
       totalItems,
-      status: 'pending',
+      status: "pending",
     });
 
     await Notifications.create({
@@ -100,17 +110,17 @@ const createOrder = async (req, res) => {
       paymentMethod,
       orderId: orderCreated._id,
       city: user.city,
-      cover: user?.cover?.url || '',
+      cover: user?.cover?.url || "",
     });
 
     let htmlContent = readHTMLTemplate();
 
     htmlContent = htmlContent.replace(
       /{{recipientName}}/g,
-      `${user.firstName} ${user.lastName}`
+      `${user.firstName} ${user.lastName}`,
     );
 
-    let itemsHtml = '';
+    let itemsHtml = "";
     updatedItems.forEach((item) => {
       itemsHtml += `
         <tr>
@@ -131,17 +141,20 @@ const createOrder = async (req, res) => {
     htmlContent = htmlContent.replace(/{{subTotal}}/g, orderCreated.total);
 
     let transporter = nodemailer.createTransport({
-      service: 'gmail',
+      service: "gmail",
       auth: {
+        // eslint-disable-next-line no-undef
         user: process.env.RECEIVING_EMAIL,
+         // eslint-disable-next-line no-undef
         pass: process.env.EMAIL_PASSWORD,
       },
     });
 
     let mailOptions = {
+      // eslint-disable-next-line no-undef
       from: process.env.RECEIVING_EMAIL,
       to: user.email,
-      subject: 'Your Order Confirmation',
+      subject: "Your Order Confirmation",
       html: htmlContent,
     };
 
@@ -149,7 +162,7 @@ const createOrder = async (req, res) => {
 
     return res.status(201).json({
       success: true,
-      message: 'Order Placed',
+      message: "Order Placed",
       orderId: orderCreated._id,
       data: items.name,
     });
@@ -165,7 +178,7 @@ const getOrderById = async (req, res) => {
     if (!orderGet) {
       return res
         .status(404)
-        .json({ success: false, message: 'Order not found' });
+        .json({ success: false, message: "Order not found" });
     }
 
     return res.status(200).json({
@@ -176,12 +189,12 @@ const getOrderById = async (req, res) => {
     return res.status(400).json({ success: false, message: error.message });
   }
 };
-const getOrderforAdmin = async (request, { query }) => {
+const getOrderforAdmin = async (request, { query },res) => {
   try {
     const { searchParams } = new URL(request.url);
-    const pageQuery = searchParams.get('page');
-    const limitQuery = searchParams.get('limit');
-    const searchQuery = searchParams.get('search');
+    const pageQuery = searchParams.get("page");
+    const limitQuery = searchParams.get("limit");
+    const searchQuery = searchParams.get("search");
     const limit = parseInt(limitQuery) || 10;
     const page = parseInt(pageQuery) || 1;
     var newQuery = { ...query };
@@ -190,23 +203,23 @@ const getOrderforAdmin = async (request, { query }) => {
 
     const totalOrders = await Orders.find({
       $or: [
-        { 'user.firstName': { $regex: searchQuery, $options: 'i' } },
-        { 'user.lastName': { $regex: searchQuery, $options: 'i' } },
+        { "user.firstName": { $regex: searchQuery, $options: "i" } },
+        { "user.lastName": { $regex: searchQuery, $options: "i" } },
       ],
     });
 
     const orders = await Orders.find(
       {
         $or: [
-          { 'user.firstName': { $regex: searchQuery, $options: 'i' } },
-          { 'user.lastName': { $regex: searchQuery, $options: 'i' } },
+          { "user.firstName": { $regex: searchQuery, $options: "i" } },
+          { "user.lastName": { $regex: searchQuery, $options: "i" } },
         ],
       },
       null,
       {
         limit: limit,
         skip: skip,
-      }
+      },
     ).sort({
       createdAt: -1,
     });
@@ -234,13 +247,13 @@ const getOneOrderForAdmin = async (req, res) => {
       {
         new: true,
         runValidators: true,
-      }
+      },
     );
     const orderGet = await Orders.findById({ _id: id });
     if (!orderGet) {
       return res.status(404).json({
         success: false,
-        message: 'Order Not Found',
+        message: "Order Not Found",
       });
     }
 
@@ -263,12 +276,12 @@ const updateOrderForAdmin = async (req, res) => {
     if (!order) {
       return res.status(404).json({
         success: false,
-        message: 'Order Not Found',
+        message: "Order Not Found",
       });
     }
     return res.status(200).json({
       success: true,
-      message: 'Order Updated',
+      message: "Order Updated",
     });
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });
@@ -283,7 +296,7 @@ const deleteOrderForAdmin = async (req, res) => {
     if (!order) {
       return res.status(404).json({
         success: false,
-        message: 'Order Not Found',
+        message: "Order Not Found",
       });
     }
 
@@ -293,7 +306,7 @@ const deleteOrderForAdmin = async (req, res) => {
     // Remove the order ID from the user's order array
     await User.findOneAndUpdate(
       { _id: order.user },
-      { $pull: { orders: orderId } }
+      { $pull: { orders: orderId } },
     );
 
     // Delete notifications related to the order
@@ -301,13 +314,14 @@ const deleteOrderForAdmin = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: 'Order Deleted',
+      message: "Order Deleted",
     });
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });
   }
 };
 
+// eslint-disable-next-line no-undef
 module.exports = {
   createOrder,
   getOrderById,

@@ -1,6 +1,9 @@
-const SubCategories = require('../models/SubCategory');
-const Category = require('../models/Category');
-const getBlurDataURL = require('../config/getBlurDataURL');
+// eslint-disable-next-line no-undef
+const SubCategories = require("../models/SubCategory");
+// eslint-disable-next-line no-undef
+const Category = require("../models/Category");
+// eslint-disable-next-line no-undef
+const getBlurDataURL = require("../config/getBlurDataURL");
 
 const createsubcategories = async (req, res) => {
   try {
@@ -23,7 +26,7 @@ const createsubcategories = async (req, res) => {
       },
     });
 
-    res.status(201).json({ success: true, message: 'subcategories-created' });
+    res.status(201).json({ success: true, message: "subcategories-created" });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -31,21 +34,21 @@ const createsubcategories = async (req, res) => {
 
 const getAllSubCategories = async (req, res) => {
   try {
-    const { limit = 10, page = 1, search = '' } = req.query;
+    const { limit = 10, page = 1, search = "" } = req.query;
 
     const skip = parseInt(limit) || 10;
     const totalSubCategories = await SubCategories.find({
-      name: { $regex: search, $options: 'i' },
+      name: { $regex: search, $options: "i" },
     });
     const subcategories = await SubCategories.find(
       {
-        name: { $regex: search, $options: 'i' },
+        name: { $regex: search, $options: "i" },
       },
       null,
       {
         skip: skip * (parseInt(page) - 1 || 0),
         limit: skip,
-      }
+      },
     ).sort({
       createdAt: -1,
     });
@@ -67,14 +70,14 @@ const getSubCategoriesBySlug = async (req, res) => {
 
     if (!subcategories) {
       return res.status(400).json({
-        message: 'item-could-not-be-found',
+        message: "item-could-not-be-found",
       });
     }
 
     res.status(201).json({ success: true, data: subcategories });
   } catch (error) {
     res.status(400).json({
-      message: 'subcategories-could-not-be-found',
+      message: "subcategories-could-not-be-found",
     });
   }
 };
@@ -95,7 +98,7 @@ const updateSubCategoriesBySlug = async (req, res) => {
           ...cover,
         },
       },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
     // Check if parent category is updated
     if (
@@ -112,13 +115,11 @@ const updateSubCategoriesBySlug = async (req, res) => {
       });
     }
 
-    res
-      .status(201)
-      .json({
-        success: true,
-        message: 'subcategories-updated',
-        currentCategory,
-      });
+    res.status(201).json({
+      success: true,
+      message: "subcategories-updated",
+      currentCategory,
+    });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -136,13 +137,13 @@ const deleteSubCategoriesBySlug = async (req, res) => {
     if (!subCategory) {
       return res.status(400).json({
         success: false,
-        message: 'subcategories-could-not-be-found',
+        message: "subcategories-could-not-be-found",
       });
     }
 
     res
       .status(201)
-      .json({ success: true, message: 'subcategories deleted successfully' });
+      .json({ success: true, message: "subcategories deleted successfully" });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -161,6 +162,7 @@ const getSubCategories = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+// eslint-disable-next-line no-undef
 module.exports = {
   createsubcategories,
   getSubCategories,

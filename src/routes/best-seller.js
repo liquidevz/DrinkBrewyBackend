@@ -1,9 +1,9 @@
-const express = require('express');
+// eslint-disable-next-line no-undef
+const express = require("express");
 const router = express.Router();
-const best_seller = require('../controllers/best-seller');
+// eslint-disable-next-line no-undef
+const best_seller = require("../controllers/best-seller");
 
-
-router.get('/best-seller', best_seller.BestSellerProducts);
-
-
+router.get("/best-seller", best_seller.BestSellerProducts);
+// eslint-disable-next-line no-undef
 module.exports = router;

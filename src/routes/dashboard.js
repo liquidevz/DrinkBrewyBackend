@@ -1,16 +1,19 @@
-const express = require('express');
+// eslint-disable-next-line no-undef
+const express = require("express");
 const router = express.Router();
-const dashboard = require('../controllers/dashboard');
+// eslint-disable-next-line no-undef
+const dashboard = require("../controllers/dashboard");
 
 // Import verifyToken function
-const verifyToken = require('../config/jwt');
+// eslint-disable-next-line no-undef
+const verifyToken = require("../config/jwt");
 
 router.get(
-  '/admin/dashboard-analytics',
+  "/admin/dashboard-analytics",
   verifyToken,
-  dashboard.getDashboardAnalytics
+  dashboard.getDashboardAnalytics,
 );
 
-router.get('/admin/notifications', verifyToken, dashboard.getNofications);
-
+router.get("/admin/notifications", verifyToken, dashboard.getNofications);
+// eslint-disable-next-line no-undef
 module.exports = router;
