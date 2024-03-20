@@ -1,18 +1,17 @@
 
 const Products =require ('../models/Product');
 const Users =require ('../models/User');
-const { getUser } =require ('../config/getUser');
-const  ObjectId =require ('mongodb');
-
+const { getUser } = require('../config/getUser');
+const { ObjectId } = require('mongoose').Types;
 const getWishlist=async(req,res)=> {
   try {
     const user = await getUser(req, res);
-    // const uid = user._id.toString();
+    //  Fetch wishlist and related products
     const wishlist = user.wishlist;
     const products = await Products.aggregate([
       {
         $match: {
-          _id: { $in: wishlist } // Match products with IDs present in the Pids array
+          _id: { $in: wishlist } // Match products with IDs present in the wishlist
         }
       },
       {
@@ -30,7 +29,7 @@ const getWishlist=async(req,res)=> {
       },
       {
         $project: {
-          _id: 1, // Include the product ID
+          _id: 1,
           images: 1,
           name: 1,
           brand: 1,
@@ -47,24 +46,25 @@ const getWishlist=async(req,res)=> {
         }
       }
     ]);
-
-    return res.status(200).json(
-      {
-        success: true,
-        data: products
-      }
-    );
+  
+    return res.status(200).json({
+      success: true,
+      data: products
+    });
   } catch (error) {
+    console.error('Error fetching wishlist:', error);
     return res.status(400).json({ success: false, message: error.message });
   }
+
+  
 }
 
 const createWishlist=async(req,res)=>{
   try {
     const user = await getUser(req, res);
-   const uid = user._id.toString();
+    const uid = user._id.toString();
+     const {pid}=await req.body;
     const wishlist = user.wishlist;
-    const { pid } = await req.body;
 
     const isAlready = wishlist.filter((id) => id.toString() === pid);
 
@@ -185,6 +185,7 @@ const createWishlist=async(req,res)=>{
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });
   }
+
 }
 module.exports={
     getWishlist,
