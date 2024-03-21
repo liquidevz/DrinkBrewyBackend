@@ -1,14 +1,15 @@
 // eslint-disable-next-line no-undef
-const express = require("express");
-const router = express.Router();
+const express = require("express")
+const router = express.Router()
 // eslint-disable-next-line no-undef
-const adminController = require("../controllers/admin");
-
-
-router.get("/admin/users", adminController.getUsersForAdmin);
-
-router.get("/admin/users/:id", adminController.getOrdersByUid);
-
-router.put("/admin/users/:id", adminController.UpdateRoleForAdmin);
+const adminController = require("../controllers/admin")
 // eslint-disable-next-line no-undef
-module.exports = router;
+const verifyToken = require("../config/jwt")
+
+router.get("/admin/users", verifyToken, adminController.getUsersForAdmin)
+
+router.get("/admin/users/:id", verifyToken, adminController.getOrdersByUid)
+
+router.put("/admin/users/:id", verifyToken, adminController.UpdateRoleForAdmin)
+// eslint-disable-next-line no-undef
+module.exports = router
