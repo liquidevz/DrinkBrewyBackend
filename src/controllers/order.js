@@ -35,6 +35,7 @@ const createOrder = async (req, res) => {
 		const { items, user, paymentMethod, paymentId, couponCode, totalItems } =
 			await req.body
 
+		// eslint-disable-next-line no-undef
 		const shipping = parseInt(process.env.SHIPPING_FEE || 0)
 
 		if (!items || !items.length) {
