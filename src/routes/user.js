@@ -1,16 +1,18 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const userController = require("../controllers/user");
+const userController = require('../controllers/user');
 
+const verifyToken = require('../config/jwt');
+router.get('/users/profile', verifyToken, userController.getOneUser);
 
-router.get("/users/profile", userController.getOneUser);
+router.put('/users/profile', verifyToken, userController.updateUser);
 
-router.put("/users/profile", userController.updateUser);
+router.get('/users/invoice', verifyToken, userController.getInvoice);
 
-router.get("users/invoice", userController.getInvoice);
-
-router.put("users/changepassword", userController.changePassword);
-
-
+router.put(
+  '/users/change-password',
+  verifyToken,
+  userController.changePassword
+);
 
 module.exports = router;
