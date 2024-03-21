@@ -62,6 +62,7 @@ const getTopProducts = async (req, res) => {
           available: 1,
           averageRating: 1,
           image: 1,
+          colors: 1,
         },
       },
     ]);
