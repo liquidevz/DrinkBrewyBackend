@@ -35,5 +35,6 @@ router.delete(
 	verifyToken,
 	couponCodeRoutes.deleteCouponCodeForAdmin
 )
+
 // eslint-disable-next-line no-undef
 module.exports = router
