@@ -6,7 +6,7 @@ const subcategories = require('../controllers/subcategory');
 const verifyToken = require('../config/jwt');
 
 router.post(
-  '/admin/subcategory',
+  '/admin/subcategories',
   verifyToken,
   subcategories.createsubcategories
 );

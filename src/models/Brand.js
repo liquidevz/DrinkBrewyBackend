@@ -13,8 +13,8 @@ const BrandSchema = new mongoose.Schema(
       },
       blurDataURL: {
         type: String,
-        required: [true, 'image-blur-data-url-required-error']
-      }
+        required: [true, 'image-blur-data-url-required-error'],
+      },
     },
     name: {
       type: String,
@@ -40,10 +40,6 @@ const BrandSchema = new mongoose.Schema(
     status: {
       type: String,
       required: [true, 'Status is required.'],
-      enum: {
-        values: ['active', 'inactive'],
-        message: 'Invalid status value.',
-      },
     },
   },
   {
