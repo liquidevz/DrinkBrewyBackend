@@ -1,19 +1,20 @@
-const mongoose = require('mongoose');
+// eslint-disable-next-line no-undef
+const mongoose = require("mongoose");
 
 // Interface representing a single document in the Notifications collection
 const NotificationsSchema = new mongoose.Schema(
   {
     opened: {
       type: Boolean,
-      required: [true, 'Open is required.'],
+      required: [true, "Open is required."],
     },
     title: {
       type: String,
-      required: [true, 'Title is required.'],
+      required: [true, "Title is required."],
     },
     orderId: {
       type: String,
-      required: [true, 'Order Id is required.'],
+      required: [true, "Order Id is required."],
     },
     cover: {
       _id: {
@@ -25,21 +26,22 @@ const NotificationsSchema = new mongoose.Schema(
     },
     city: {
       type: String,
-      required: [true, 'City is required.'],
+      required: [true, "City is required."],
     },
     paymentMethod: {
       type: String,
-      required: [true, 'Payment Method is required.'],
-      enum: ['stripe', 'COD'],
+      required: [true, "Payment Method is required."],
+      enum: ["stripe", "COD"],
     },
   },
   {
     timestamps: true, // Adds createdAt and updatedAt fields automatically
-  }
+  },
 );
 
 // Export the Notifications model based on the NotificationsSchema
 const Notifications =
   mongoose.models.Notifications ||
-  mongoose.model('Notifications', NotificationsSchema);
+  mongoose.model("Notifications", NotificationsSchema);
+  // eslint-disable-next-line no-undef
 module.exports = Notifications;

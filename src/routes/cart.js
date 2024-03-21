@@ -1,9 +1,9 @@
-const express = require('express');
+// eslint-disable-next-line no-undef
+const express = require("express");
 const router = express.Router();
-const cart = require('../controllers/cart');
+// eslint-disable-next-line no-undef
+const cart = require("../controllers/cart");
 
-
-router.post('/cart', cart.createCart);
-
-
+router.post("/cart", cart.createCart);
+// eslint-disable-next-line no-undef
 module.exports = router;

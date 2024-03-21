@@ -1,21 +1,22 @@
-const mongoose = require('mongoose');
+// eslint-disable-next-line no-undef
+const mongoose = require("mongoose");
 
 const CouponCodeSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, 'Name is required.'],
+      required: [true, "Name is required."],
     },
     code: {
       type: String,
       minlength: 4,
       unique: true,
-      required: [true, 'Code is required.'],
+      required: [true, "Code is required."],
     },
     discount: {
       type: Number,
       minlength: 4,
-      required: [true, 'Discount is required.'],
+      required: [true, "Discount is required."],
     },
     expire: {
       type: Date,
@@ -26,14 +27,15 @@ const CouponCodeSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ['percent', 'fixed'], // This ensures that 'type' can only be 'percent' or 'fixed'
-      required: [true, 'Type is required.'],
+      enum: ["percent", "fixed"], // This ensures that 'type' can only be 'percent' or 'fixed'
+      required: [true, "Type is required."],
     },
   },
   {
     timestamps: true,
-  }
+  },
 );
 const CouponCode =
-  mongoose.models.CouponCode || mongoose.model('CouponCode', CouponCodeSchema);
+  mongoose.models.CouponCode || mongoose.model("CouponCode", CouponCodeSchema);
+  // eslint-disable-next-line no-undef
 module.exports = CouponCode;
