@@ -190,36 +190,29 @@ const getOrderById = async (req, res) => {
 		return res.status(400).json({ success: false, message: error.message })
 	}
 }
-const getOrderforAdmin = async (request, { query }, res) => {
+const getOrderforAdmin = async (req, res) => {
 	try {
-		const { searchParams } = new URL(request.url)
-		const pageQuery = searchParams.get("page")
-		const limitQuery = searchParams.get("limit")
-		const searchQuery = searchParams.get("search")
-		const limit = parseInt(limitQuery) || 10
-		const page = parseInt(pageQuery) || 1
-		var newQuery = { ...query }
-		delete newQuery.page
-		const skip = limit * (page - 1)
+		const { limit = 10, page = 1, search = "" } = req.query
 
-		const totalOrders = await Orders.find({
+		const skip = parseInt(limit) * (parseInt(page) - 1) || 0
+		const totalOrderCount = await Orders.countDocuments({
 			$or: [
-				{ "user.firstName": { $regex: searchQuery, $options: "i" } },
-				{ "user.lastName": { $regex: searchQuery, $options: "i" } },
+				{ "user.firstName": { $regex: search, $options: "i" } },
+				{ "user.lastName": { $regex: search, $options: "i" } },
 			],
 		})
 
 		const orders = await Orders.find(
 			{
 				$or: [
-					{ "user.firstName": { $regex: searchQuery, $options: "i" } },
-					{ "user.lastName": { $regex: searchQuery, $options: "i" } },
+					{ "user.firstName": { $regex: search, $options: "i" } },
+					{ "user.lastName": { $regex: search, $options: "i" } },
 				],
 			},
 			null,
 			{
-				limit: limit,
 				skip: skip,
+				limit: parseInt(limit),
 			}
 		).sort({
 			createdAt: -1,
@@ -228,8 +221,8 @@ const getOrderforAdmin = async (request, { query }, res) => {
 		return res.status(200).json({
 			success: true,
 			data: orders,
-			total: totalOrders,
-			count: Math.ceil(totalOrders / limit),
+			total: totalOrderCount,
+			count: Math.ceil(totalOrderCount / parseInt(limit)),
 			currentPage: page,
 		})
 	} catch (error) {
