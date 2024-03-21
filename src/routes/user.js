@@ -12,5 +12,7 @@ router.put("/users/profile", verifyToken, userController.updateUser)
 router.get("/users/invoice", verifyToken, userController.getInvoice)
 
 router.put("/users/change-password", verifyToken, userController.changePassword)
+router.post("/admin/users/:uid", verifyToken, userController.getUserByAdmin)
+router.post("/admin/users/role/:uid", verifyToken, userController.updateRole)
 // eslint-disable-next-line no-undef
 module.exports = router
