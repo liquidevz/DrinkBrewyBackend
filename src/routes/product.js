@@ -1,11 +1,11 @@
-// eslint-disable-next-line no-undef
+
 const express = require("express");
 const router = express.Router();
-// eslint-disable-next-line no-undef
+
 const product = require("../controllers/product");
 
 // Import verifyToken function
-// eslint-disable-next-line no-undef
+
 const verifyToken = require("../config/jwt");
 
 // admin routes
@@ -29,5 +29,5 @@ router.get("/filters/:category", product.getFiltersByCategory);
 router.get("/filters/:category/:subcategory", product.getFiltersBySubCategory);
 router.get("/products/:slug", product.getOneProductBySlug);
 router.get("/products-slugs", product.getAllProductSlug);
-// eslint-disable-next-line no-undef
+
 module.exports = router;

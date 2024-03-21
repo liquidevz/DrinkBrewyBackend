@@ -1,4 +1,4 @@
-// eslint-disable-next-line no-undef
+
 const mongoose = require("mongoose")
 
 const BrandSchema = new mongoose.Schema(
@@ -49,5 +49,5 @@ const BrandSchema = new mongoose.Schema(
 )
 
 const Brand = mongoose.models.Brand || mongoose.model("Brand", BrandSchema)
-// eslint-disable-next-line no-undef
+
 module.exports = Brand

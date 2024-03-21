@@ -1,10 +1,10 @@
-// eslint-disable-next-line no-undef
+
 const express = require("express")
 const router = express.Router()
-// eslint-disable-next-line no-undef
+
 const couponCodeRoutes = require("../controllers/coupon-code")
 // Import verifyToken function
-// eslint-disable-next-line no-undef
+
 const verifyToken = require("../config/jwt")
 //user routes
 router.get("/coupon-code/:code", couponCodeRoutes.getCouponCodeByCode)
@@ -36,5 +36,5 @@ router.delete(
 	couponCodeRoutes.deleteCouponCodeForAdmin
 )
 
-// eslint-disable-next-line no-undef
+
 module.exports = router

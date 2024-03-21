@@ -1,8 +1,8 @@
-// eslint-disable-next-line no-undef
-const SubCategories = require("../models/sub-category")
-// eslint-disable-next-line no-undef
-const Category = require("../models/category")
-// eslint-disable-next-line no-undef
+
+const SubCategories = require("../models/SubCategory")
+
+const Category = require("../models/Category")
+
 const getBlurDataURL = require("../config/getBlurDataURL")
 
 const createsubcategories = async (req, res) => {
@@ -177,7 +177,7 @@ const getSubCategoryNameBySlug = async (req, res) => {
 		res.status(400).json({ success: false, message: error.message })
 	}
 }
-// eslint-disable-next-line no-undef
+
 module.exports = {
 	createsubcategories,
 	getSubCategories,

@@ -1,4 +1,4 @@
-// eslint-disable-next-line no-undef
+
 const mongoose = require("mongoose")
 
 /* Define the interface for the SubCategory document */
@@ -54,7 +54,7 @@ const SubCategorySchema = new mongoose.Schema(
 	},
 	{ timestamps: true }
 )
-// eslint-disable-next-line no-undef
+
 module.exports =
 	mongoose.models.SubCategory ||
 	mongoose.model("SubCategory", SubCategorySchema)

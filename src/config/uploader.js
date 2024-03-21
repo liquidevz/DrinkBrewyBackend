@@ -1,5 +1,5 @@
 // Import the cloudinary module
-// eslint-disable-next-line no-undef
+
 const cloudinary = require("./cloudinary");
 
 const uploadOnCloudinary = (file) => {
@@ -9,7 +9,7 @@ const uploadOnCloudinary = (file) => {
 const deleteFromCloudinary = (file) => {
   return cloudinary.uploader.destroy(file);
 };
-// eslint-disable-next-line no-undef
+
 exports.multiFileUploader = async (images) => {
   const cloudinaryImageUploadMethod = async (file) => {
     const image = await uploadOnCloudinary(file);
@@ -34,7 +34,7 @@ exports.multiFileUploader = async (images) => {
   });
   return uploaded;
 };
-// eslint-disable-next-line no-undef
+
 exports.singleFileUploader = async (image) => {
   const result = await uploadOnCloudinary(image);
   const uploaded = {
@@ -43,13 +43,13 @@ exports.singleFileUploader = async (image) => {
   };
   return uploaded;
 };
-// eslint-disable-next-line no-undef
+
 exports.singleFileDelete = async (id) => {
   const result = await deleteFromCloudinary(id);
   return result;
 };
 
-// eslint-disable-next-line no-undef
+
 exports.multiFilesDelete = async (images) => {
   var imageUrlList = [];
   for (var i = 0; i < images.length; i++) {

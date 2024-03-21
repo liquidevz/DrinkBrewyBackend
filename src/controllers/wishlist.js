@@ -1,8 +1,8 @@
-// eslint-disable-next-line no-undef
-const Products = require("../models/product")
-// eslint-disable-next-line no-undef
-const Users = require("../models/user")
-// eslint-disable-next-line no-undef
+
+const Products = require("../models/Product")
+
+const Users = require("../models/User")
+
 const { getUser } = require("../config/getUser")
 const getWishlist = async (req, res) => {
 	try {
@@ -104,7 +104,7 @@ const createWishlist = async (req, res) => {
 		return res.status(400).json({ success: false, message: error.message })
 	}
 }
-// eslint-disable-next-line no-undef
+
 module.exports = {
 	getWishlist,
 	createWishlist,

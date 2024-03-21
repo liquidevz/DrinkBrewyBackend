@@ -1,6 +1,6 @@
-// eslint-disable-next-line no-undef
+
 const Users = require("../models/user")
-// eslint-disable-next-line no-undef
+
 exports.getUser = async (req, res) => {
 	if (!req.user) {
 		return res
@@ -23,7 +23,7 @@ exports.getUser = async (req, res) => {
 			.json({ success: false, message: "Internal server error." })
 	}
 }
-// eslint-disable-next-line no-undef
+
 exports.getAdmin = async (req, res) => {
 	try {
 		if (!req.user) {

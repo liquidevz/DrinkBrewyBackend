@@ -1,9 +1,9 @@
-// eslint-disable-next-line no-undef
-const Products = require("../models/product")
-// eslint-disable-next-line no-undef
-const Categories = require("../models/category")
-// eslint-disable-next-line no-undef
-const Brands = require("../models/brand")
+
+const Products = require("../models/Product")
+
+const Categories = require("../models/Category")
+
+const Brands = require("../models/Brand")
 
 const Search = async (req, res) => {
 	try {
@@ -54,5 +54,5 @@ const Search = async (req, res) => {
 		return res.status(400).json({ success: false, message: error.message })
 	}
 }
-// eslint-disable-next-line no-undef
+
 module.exports = { Search }

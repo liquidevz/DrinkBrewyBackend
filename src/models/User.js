@@ -1,6 +1,6 @@
-// eslint-disable-next-line no-undef
+
 const mongoose = require("mongoose")
-// eslint-disable-next-line no-undef
+
 const bcrypt = require("bcrypt")
 
 const UserSchema = new mongoose.Schema(
@@ -121,5 +121,5 @@ UserSchema.pre("save", async function (next) {
 })
 
 const User = mongoose.models.User || mongoose.model("User", UserSchema)
-// eslint-disable-next-line no-undef
+
 module.exports = User

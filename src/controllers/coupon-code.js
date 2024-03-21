@@ -1,5 +1,5 @@
-// eslint-disable-next-line no-undef
-const CouponCode = require("../models/coupon-code")
+
+const CouponCode = require("../models/CouponCode")
 
 const getCouponCodeByCode = async (req, res) => {
 	try {
@@ -127,7 +127,7 @@ const deleteCouponCodeForAdmin = async (req, res) => {
 		return res.status(400).json({ success: false, message: error.message })
 	}
 }
-// eslint-disable-next-line no-undef
+
 module.exports = {
 	getCouponCodeByCode,
 	getCouponCodesForAdmin,

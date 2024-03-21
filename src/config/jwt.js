@@ -1,4 +1,4 @@
-// eslint-disable-next-line no-undef
+
 const jwt = require("jsonwebtoken");
 
 function verifyToken(req, res, next) {
@@ -14,7 +14,7 @@ function verifyToken(req, res, next) {
   // Verify the token
   jwt.verify(
     token.replace("Bearer ", ""),
-    // eslint-disable-next-line no-undef
+    
     process.env.JWT_SECRET || "123456",
     (err, decoded) => {
       if (err) {
@@ -31,5 +31,5 @@ function verifyToken(req, res, next) {
     },
   );
 }
-// eslint-disable-next-line no-undef
+
 module.exports = verifyToken;

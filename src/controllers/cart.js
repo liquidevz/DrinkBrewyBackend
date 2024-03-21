@@ -1,5 +1,5 @@
-// eslint-disable-next-line no-undef
-const Products = require("../models/product")
+
+const Products = require("../models/Product")
 
 const createCart = async (request, response) => {
 	try {
@@ -53,5 +53,5 @@ const createCart = async (request, response) => {
 		return response.status(400).json({ success: false, message: error.message })
 	}
 }
-// eslint-disable-next-line no-undef
+
 module.exports = { createCart }

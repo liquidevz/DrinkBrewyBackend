@@ -1,10 +1,10 @@
-// eslint-disable-next-line no-undef
+
 const express = require("express");
 const router = express.Router();
-// eslint-disable-next-line no-undef
+
 const orderRoutes = require("../controllers/order");
 // Import verifyToken function
-// eslint-disable-next-line no-undef
+
 const verifyToken = require("../config/jwt");
 //user routes
 router.post("/orders", orderRoutes.createOrder);
@@ -19,5 +19,5 @@ router.delete(
   verifyToken,
   orderRoutes.deleteOrderForAdmin,
 );
-// eslint-disable-next-line no-undef
+
 module.exports = router;

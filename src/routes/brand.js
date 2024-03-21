@@ -1,11 +1,11 @@
-// eslint-disable-next-line no-undef
+
 const express = require("express");
 const router = express.Router();
-// eslint-disable-next-line no-undef
+
 const brand = require("../controllers/brand");
 
 // Import verifyToken function
-// eslint-disable-next-line no-undef
+
 const verifyToken = require("../config/jwt");
 
 // admin routes
@@ -28,5 +28,5 @@ router.get("/admin/brands/all", verifyToken, brand.getBrands);
 // User routes
 
 router.get("/brands", brand.getAllBrands);
-// eslint-disable-next-line no-undef
+
 module.exports = router;

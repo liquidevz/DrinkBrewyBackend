@@ -1,4 +1,4 @@
-// eslint-disable-next-line no-undef
+
 const mongoose = require("mongoose")
 
 // Interface representing a single document in the Notifications collection
@@ -43,5 +43,5 @@ const NotificationsSchema = new mongoose.Schema(
 const Notifications =
 	mongoose.models.Notifications ||
 	mongoose.model("Notifications", NotificationsSchema)
-// eslint-disable-next-line no-undef
+
 module.exports = Notifications

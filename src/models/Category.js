@@ -1,4 +1,4 @@
-// eslint-disable-next-line no-undef
+
 const mongoose = require("mongoose")
 
 const CategorySchema = new mongoose.Schema(
@@ -60,5 +60,5 @@ const CategorySchema = new mongoose.Schema(
 
 const Category =
 	mongoose.models.Category || mongoose.model("Category", CategorySchema)
-// eslint-disable-next-line no-undef
+
 module.exports = Category

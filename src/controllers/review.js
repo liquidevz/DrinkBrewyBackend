@@ -1,12 +1,12 @@
-// eslint-disable-next-line no-undef
-const Review = require("../models/review")
-// eslint-disable-next-line no-undef
-const Products = require("../models/product")
-// eslint-disable-next-line no-undef
+
+const Review = require("../models/Review")
+
+const Products = require("../models/Product")
+
 const { getUser } = require("../config/getUser")
-// eslint-disable-next-line no-undef
-const Orders = require("../models/order")
-// eslint-disable-next-line no-undef
+
+const Orders = require("../models/Order")
+
 const blurDataUrl = require("../config/getBlurDataURL")
 const getReviewsbyPid = async (req, res) => {
 	try {
@@ -197,11 +197,11 @@ const createReviewForAdmin = async (req, res) => {
 			return res.status(201).json({ success: true, data: newReview })
 		}
 	} catch (error) {
-		// eslint-disable-next-line no-undef
+		
 		return res.status(400).json({ success: false, message: message.error })
 	}
 }
-// eslint-disable-next-line no-undef
+
 module.exports = {
 	getReviewsbyPid,
 	createReview,

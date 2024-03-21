@@ -1,9 +1,9 @@
-// eslint-disable-next-line no-undef
-const BrandModel = require("../models/brand")
-// eslint-disable-next-line no-undef
-const Category = require("../models/category")
-// eslint-disable-next-line no-undef
-const Product = require("../models/product")
+
+const BrandModel = require("../models/Brand")
+
+const Category = require("../models/Category")
+
+const Product = require("../models/Product")
 
 const getCategories = async (req, res) => {
 	try {
@@ -93,7 +93,7 @@ const getBrands = async (req, res) => {
 		})
 	}
 }
-// eslint-disable-next-line no-undef
+
 module.exports = {
 	getCategories,
 	getTopProducts,

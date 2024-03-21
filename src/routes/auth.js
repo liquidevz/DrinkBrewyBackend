@@ -1,7 +1,7 @@
-// eslint-disable-next-line no-undef
+
 const express = require("express");
 const router = express.Router();
-// eslint-disable-next-line no-undef
+
 const authController = require("../controllers/auth");
 
 router.post("/auth/register", authController.register);
@@ -17,5 +17,5 @@ router.post("/auth/verify-otp", authController.verifyOtp);
 router.post("/auth/resend-otp", authController.resendOtp);
 
 // router.get("/profile", verifyToken, userController.getProfile);
-// eslint-disable-next-line no-undef
+
 module.exports = router;

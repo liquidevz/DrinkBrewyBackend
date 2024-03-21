@@ -1,15 +1,15 @@
 // controllers/newsController.js
-// eslint-disable-next-line no-undef
-const Brand = require("../models/brand")
-// eslint-disable-next-line no-undef
-const Product = require("../models/product")
-// eslint-disable-next-line no-undef
-const Category = require("../models/category")
-// eslint-disable-next-line no-undef
-const SubCategory = require("../models/sub-category")
-// eslint-disable-next-line no-undef
+
+const Brand = require("../models/Brand")
+
+const Product = require("../models/Product")
+
+const Category = require("../models/Category")
+
+const SubCategory = require("../models/SubCategory")
+
 const _ = require("lodash")
-// eslint-disable-next-line no-undef
+
 const blurDataUrl = require("../config/getBlurDataURL")
 const getProducts = async (req, res) => {
 	try {
@@ -315,7 +315,7 @@ async function getOneProductBySlug(req, res) {
 		const brand = await Brand.findById(product.brand).select("name")
 
 		if (!product) {
-			// eslint-disable-next-line no-undef
+			
 			notFound()
 		}
 
@@ -393,7 +393,7 @@ async function deletedProductBySlug(req, res) {
 		// eslint-disable-next-line no-unused-vars
 		const length = product?.images?.length || 0
 		// for (let i = 0; i < length; i++) {
-		//   // eslint-disable-next-line no-undef
+		//   
 		//   await multiFilesDelete(product?.images[i]);
 		// }
 
@@ -531,7 +531,7 @@ const getAllProductSlug = async (req, res) => {
 		return res.status(400).json({ success: false, message: error.message })
 	}
 }
-// eslint-disable-next-line no-undef
+
 module.exports = {
 	getProducts,
 	getFilters,

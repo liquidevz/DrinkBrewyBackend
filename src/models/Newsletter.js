@@ -1,4 +1,4 @@
-// eslint-disable-next-line no-undef
+
 const mongoose = require("mongoose")
 
 // Define the interface for the Newsletter document
@@ -16,5 +16,5 @@ const NewsletterSchema = new mongoose.Schema(
 // Define the Newsletter model
 const Newsletter =
 	mongoose.models.Newsletter || mongoose.model("Newsletter", NewsletterSchema)
-// eslint-disable-next-line no-undef
+
 module.exports = Newsletter

@@ -1,4 +1,4 @@
-// eslint-disable-next-line no-undef
+
 const Notifications = require("../models/notification")
 
 const getNotifications = async (req, res) => {
@@ -47,5 +47,5 @@ const createNotification = async (req, res) => {
 		return res.status(400).json({ success: false, message: error.message })
 	}
 }
-// eslint-disable-next-line no-undef
+
 module.exports = { getNotifications, createNotification }

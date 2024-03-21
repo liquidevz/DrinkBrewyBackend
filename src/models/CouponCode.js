@@ -1,4 +1,4 @@
-// eslint-disable-next-line no-undef
+
 const mongoose = require("mongoose");
 
 const CouponCodeSchema = new mongoose.Schema(
@@ -37,5 +37,5 @@ const CouponCodeSchema = new mongoose.Schema(
 );
 const CouponCode =
   mongoose.models.CouponCode || mongoose.model("CouponCode", CouponCodeSchema);
-  // eslint-disable-next-line no-undef
+  
 module.exports = CouponCode;

@@ -1,10 +1,10 @@
-// eslint-disable-next-line no-undef
+
 const express = require("express")
 const router = express.Router()
-// eslint-disable-next-line no-undef
+
 const subcategories = require("../controllers/subcategory")
 
-// eslint-disable-next-line no-undef
+
 const verifyToken = require("../config/jwt")
 
 router.post(
@@ -51,5 +51,5 @@ router.get("/subcategories/all", subcategories.getAllSubCategories)
 router.get("/subcategories/:slug", subcategories.getSubCategoriesBySlug)
 router.get("/subcategory-title/:slug", subcategories.getSubCategoryNameBySlug)
 
-// eslint-disable-next-line no-undef
+
 module.exports = router

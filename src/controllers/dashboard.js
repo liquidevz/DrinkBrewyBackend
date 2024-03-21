@@ -1,11 +1,11 @@
-// eslint-disable-next-line no-undef
-const Order = require("../models/order")
-// eslint-disable-next-line no-undef
-const User = require("../models/user")
-// eslint-disable-next-line no-undef
-const Product = require("../models/product")
-// eslint-disable-next-line no-undef
-const Notifications = require("../models/notification")
+
+const Order = require("../models/Order")
+
+const User = require("../models/User")
+
+const Product = require("../models/Product")
+
+const Notifications = require("../models/Notification")
 
 const calculateExpirationDate = days => {
 	const now = new Date()
@@ -169,7 +169,7 @@ const getNofications = async (req, res) => {
 		})
 	}
 }
-// eslint-disable-next-line no-undef
+
 module.exports = {
 	getDashboardAnalytics,
 	getNofications,

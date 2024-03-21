@@ -1,5 +1,5 @@
-// eslint-disable-next-line no-undef
-const Newsletter = require("../models/newsletter")
+
+const Newsletter = require("../models/Newsletter")
 
 const getNewsletters = async (req, res) => {
 	try {
@@ -46,7 +46,7 @@ const createNewsletter = async (req, res) => {
 		})
 	}
 }
-// eslint-disable-next-line no-undef
+
 module.exports = {
 	getNewsletters,
 	createNewsletter,

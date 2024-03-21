@@ -1,10 +1,10 @@
-// eslint-disable-next-line no-undef
-const User = require("../models/user")
-// eslint-disable-next-line no-undef
-const Orders = require("../models/order")
-// eslint-disable-next-line no-undef
+
+const User = require("../models/User")
+
+const Orders = require("../models/Order")
+
 const bcrypt = require("bcrypt")
-// eslint-disable-next-line no-undef
+
 const { getUser } = require("../config/getUser")
 
 const getOneUser = async (req, res) => {
@@ -224,5 +224,5 @@ try {
 	}
 }
 
-// eslint-disable-next-line no-undef
+
 module.exports = { getOneUser, updateUser, getInvoice, changePassword, updateRole, getUserByAdmin }

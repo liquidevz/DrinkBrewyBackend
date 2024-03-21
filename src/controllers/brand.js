@@ -1,8 +1,8 @@
-// eslint-disable-next-line no-undef
+
 const Brands = require("../models/brand")
-// eslint-disable-next-line no-undef
+
 const getBlurDataURL = require("../config/getBlurDataURL")
-// eslint-disable-next-line no-undef
+
 const { singleFileDelete } = require("../config/uploader")
 
 const createBrand = async (req, res) => {
@@ -140,7 +140,7 @@ const getBrands = async (req, res) => {
 		res.status(500).json({ message: "Internal Server Error" })
 	}
 }
-// eslint-disable-next-line no-undef
+
 module.exports = {
 	createBrand,
 	getAllBrands,

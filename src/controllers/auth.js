@@ -1,18 +1,18 @@
-// eslint-disable-next-line no-undef
-const User = require("../models/user")
-// eslint-disable-next-line no-undef
-const Products = require("../models/product")
-// eslint-disable-next-line no-undef
+
+const User = require("../models/User")
+
+const Products = require("../models/Product")
+
 const jwt = require("jsonwebtoken")
-// eslint-disable-next-line no-undef
+
 const bcrypt = require("bcrypt")
-// eslint-disable-next-line no-undef
+
 const otpGenerator = require("otp-generator")
-// eslint-disable-next-line no-undef
+
 const nodemailer = require("nodemailer")
-// eslint-disable-next-line no-undef
+
 const fs = require("fs")
-// eslint-disable-next-line no-undef
+
 const path = require("path")
 const register = async (req, res) => {
 	try {
@@ -48,7 +48,7 @@ const register = async (req, res) => {
 				_id: user._id,
 				// email: user.email,
 			},
-			// eslint-disable-next-line no-undef
+			
 			process.env.JWT_SECRET,
 			{
 				expiresIn: "7d",
@@ -56,7 +56,7 @@ const register = async (req, res) => {
 		)
 		// Path to the HTML file
 		const htmlFilePath = path.join(
-			// eslint-disable-next-line no-undef
+			
 			process.cwd(),
 			"src/email-templates",
 			"otp-email.html"
@@ -73,16 +73,16 @@ const register = async (req, res) => {
 		let transporter = nodemailer.createTransport({
 			service: "gmail",
 			auth: {
-				// eslint-disable-next-line no-undef
+				
 				user: process.env.RECEIVING_EMAIL, // Your Gmail email
-				// eslint-disable-next-line no-undef
+				
 				pass: process.env.EMAIL_PASSWORD, // Your Gmail password
 			},
 		})
 
 		// Email options
 		let mailOptions = {
-			// eslint-disable-next-line no-undef
+			
 			from: process.env.RECEIVING_EMAIL, // Your Gmail email
 			to: user.email, // User's email
 			subject: "Verify your email",
@@ -133,7 +133,7 @@ const loginUser = async (req, res) => {
 				_id: user._id,
 				email: user.email,
 			},
-			// eslint-disable-next-line no-undef
+			
 			process.env.JWT_SECRET,
 			{
 				expiresIn: "7d",
@@ -216,7 +216,7 @@ const forgetPassword = async (req, res) => {
 				.status(404)
 				.json({ success: false, message: "User Not Found " })
 		}
-		// eslint-disable-next-line no-undef
+		
 		const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
 			expiresIn: "7d",
 		})
@@ -225,7 +225,7 @@ const forgetPassword = async (req, res) => {
 
 		// Path to the HTML file
 		const htmlFilePath = path.join(
-			// eslint-disable-next-line no-undef
+			
 			process.cwd(),
 			"src/email-templates",
 			"forget-password.html"
@@ -247,16 +247,16 @@ const forgetPassword = async (req, res) => {
 		let transporter = nodemailer.createTransport({
 			service: "gmail",
 			auth: {
-				// eslint-disable-next-line no-undef
+				
 				user: process.env.RECEIVING_EMAIL, // Your Gmail email
-				// eslint-disable-next-line no-undef
+				
 				pass: process.env.EMAIL_PASSWORD, // Your Gmail password
 			},
 		})
 
 		// Email options
 		let mailOptions = {
-			// eslint-disable-next-line no-undef
+			
 			from: process.env.RECEIVING_EMAIL, // Your Gmail email
 			to: user.email, // User's email
 			subject: "Verify your email",
@@ -286,7 +286,7 @@ const resetPassword = async (req, res) => {
 		// Verify the token
 		let decoded
 		try {
-			// eslint-disable-next-line no-undef
+			
 			decoded = jwt.verify(token, process.env.JWT_SECRET)
 		} catch (err) {
 			return res.status(400).json({
@@ -404,7 +404,7 @@ const resendOtp = async (req, res) => {
 
 		// Path to the HTML file
 		const htmlFilePath = path.join(
-			// eslint-disable-next-line no-undef
+			
 			process.cwd(),
 			"src/email-templates",
 			"otp-email.html"
@@ -421,16 +421,16 @@ const resendOtp = async (req, res) => {
 		let transporter = nodemailer.createTransport({
 			service: "gmail",
 			auth: {
-				// eslint-disable-next-line no-undef
+				
 				user: process.env.RECEIVING_EMAIL, // Your Gmail email
-				// eslint-disable-next-line no-undef
+				
 				pass: process.env.EMAIL_PASSWORD, // Your Gmail password
 			},
 		})
 
 		// Email options
 		let mailOptions = {
-			// eslint-disable-next-line no-undef
+			
 			from: process.env.RECEIVING_EMAIL, // Your Gmail email
 			to: user.email, // User's email
 			subject: "Verify your email",
@@ -449,7 +449,7 @@ const resendOtp = async (req, res) => {
 		return res.status(400).json({ success: false, message: error.message })
 	}
 }
-// eslint-disable-next-line no-undef
+
 module.exports = {
 	register,
 	loginUser,

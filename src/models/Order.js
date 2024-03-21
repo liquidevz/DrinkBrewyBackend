@@ -1,4 +1,4 @@
-// eslint-disable-next-line no-undef
+
 const mongoose = require("mongoose")
 
 const OrderSchema = new mongoose.Schema(
@@ -84,5 +84,5 @@ const OrderSchema = new mongoose.Schema(
 )
 
 const Order = mongoose.models.Order || mongoose.model("Order", OrderSchema)
-// eslint-disable-next-line no-undef
+
 module.exports = Order

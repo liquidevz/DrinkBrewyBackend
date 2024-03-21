@@ -1,11 +1,11 @@
-// eslint-disable-next-line no-undef
+
 const express = require("express")
 const router = express.Router()
-// eslint-disable-next-line no-undef
+
 const categories = require("../controllers/category")
 
 // Import verifyToken function
-// eslint-disable-next-line no-undef
+
 const verifyToken = require("../config/jwt")
 
 router.post("/admin/categories", verifyToken, categories.createCategory)
@@ -35,5 +35,5 @@ router.get("/subcategories-slugs", categories.getSubCategoriesSlugs)
 router.get("/categories/:slug", categories.getCategoryBySlug)
 router.get("/category-title/:slug", categories.getCategoryNameBySlug)
 
-// eslint-disable-next-line no-undef
+
 module.exports = router

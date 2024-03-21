@@ -1,7 +1,7 @@
-// eslint-disable-next-line no-undef
-const User = require("../models/user")
-// eslint-disable-next-line no-undef
-const Order = require("../models/order")
+
+const User = require("../models/User")
+
+const Order = require("../models/Order")
 
 const getUsersForAdmin = async (req, res) => {
 	try {
@@ -117,5 +117,5 @@ const UpdateRoleForAdmin = async (req, res) => {
 		return res.status(500).json({ success: false, message: error.message })
 	}
 }
-// eslint-disable-next-line no-undef
+
 module.exports = { getUsersForAdmin, getOrdersByUid, UpdateRoleForAdmin }

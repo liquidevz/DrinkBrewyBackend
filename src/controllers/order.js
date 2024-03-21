@@ -1,18 +1,18 @@
-// eslint-disable-next-line no-undef
-const Notifications = require("../models/notification")
-// eslint-disable-next-line no-undef
-const Products = require("../models/product")
-// eslint-disable-next-line no-undef
-const Orders = require("../models/order")
-// eslint-disable-next-line no-undef
-const Coupons = require("../models/coupon-code")
-// eslint-disable-next-line no-undef
-const User = require("../models/user")
-// eslint-disable-next-line no-undef
+
+const Notifications = require("../models/Notification")
+
+const Products = require("../models/Product")
+
+const Orders = require("../models/Order")
+
+const Coupons = require("../models/CouponCode")
+
+const User = require("../models/User")
+
 const nodemailer = require("nodemailer")
-// eslint-disable-next-line no-undef
+
 const fs = require("fs")
-// eslint-disable-next-line no-undef
+
 const path = require("path")
 
 function isExpired(expirationDate) {
@@ -22,7 +22,7 @@ function isExpired(expirationDate) {
 
 function readHTMLTemplate() {
 	const htmlFilePath = path.join(
-		// eslint-disable-next-line no-undef
+		
 		process.cwd(),
 		"src/email-templates",
 		"order.html"
@@ -35,7 +35,7 @@ const createOrder = async (req, res) => {
 		const { items, user, paymentMethod, paymentId, couponCode, totalItems } =
 			await req.body
 
-		// eslint-disable-next-line no-undef
+		
 		const shipping = parseInt(process.env.SHIPPING_FEE || 0)
 
 		if (!items || !items.length) {
@@ -144,15 +144,15 @@ const createOrder = async (req, res) => {
 		let transporter = nodemailer.createTransport({
 			service: "gmail",
 			auth: {
-				// eslint-disable-next-line no-undef
+				
 				user: process.env.RECEIVING_EMAIL,
-				// eslint-disable-next-line no-undef
+				
 				pass: process.env.EMAIL_PASSWORD,
 			},
 		})
 
 		let mailOptions = {
-			// eslint-disable-next-line no-undef
+			
 			from: process.env.RECEIVING_EMAIL,
 			to: user.email,
 			subject: "Your Order Confirmation",
@@ -315,7 +315,7 @@ const deleteOrderForAdmin = async (req, res) => {
 	}
 }
 
-// eslint-disable-next-line no-undef
+
 module.exports = {
 	createOrder,
 	getOrderById,
