@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-undef
-const User = require("../models/User")
+const User = require("../models/user")
 // eslint-disable-next-line no-undef
-const Products = require("../models/Product")
+const Products = require("../models/product")
 // eslint-disable-next-line no-undef
 const jwt = require("jsonwebtoken")
 // eslint-disable-next-line no-undef

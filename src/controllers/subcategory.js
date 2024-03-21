@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-undef
-const SubCategories = require("../models/SubCategory")
+const SubCategories = require("../models/sub-category")
 // eslint-disable-next-line no-undef
-const Category = require("../models/Category")
+const Category = require("../models/category")
 // eslint-disable-next-line no-undef
 const getBlurDataURL = require("../config/getBlurDataURL")
 

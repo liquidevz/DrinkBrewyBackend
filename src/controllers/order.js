@@ -1,13 +1,13 @@
 // eslint-disable-next-line no-undef
-const Notifications = require("../models/Notification")
+const Notifications = require("../models/notification")
 // eslint-disable-next-line no-undef
-const Products = require("../models/Product")
+const Products = require("../models/product")
 // eslint-disable-next-line no-undef
-const Orders = require("../models/Order")
+const Orders = require("../models/order")
 // eslint-disable-next-line no-undef
-const Coupons = require("../models/CouponCode")
+const Coupons = require("../models/coupon-code")
 // eslint-disable-next-line no-undef
-const User = require("../models/User")
+const User = require("../models/user")
 // eslint-disable-next-line no-undef
 const nodemailer = require("nodemailer")
 // eslint-disable-next-line no-undef

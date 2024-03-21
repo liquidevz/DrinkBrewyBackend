@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-undef
-const User = require("../models/User")
+const User = require("../models/user")
 // eslint-disable-next-line no-undef
-const Orders = require("../models/Order")
+const Orders = require("../models/order")
 // eslint-disable-next-line no-undef
 const bcrypt = require("bcrypt")
 // eslint-disable-next-line no-undef

@@ -1,12 +1,12 @@
 // controllers/newsController.js
 // eslint-disable-next-line no-undef
-const Brand = require("../models/Brand")
+const Brand = require("../models/brand")
 // eslint-disable-next-line no-undef
-const Product = require("../models/Product")
+const Product = require("../models/product")
 // eslint-disable-next-line no-undef
-const Category = require("../models/Category")
+const Category = require("../models/category")
 // eslint-disable-next-line no-undef
-const SubCategory = require("../models/SubCategory")
+const SubCategory = require("../models/sub-category")
 // eslint-disable-next-line no-undef
 const _ = require("lodash")
 // eslint-disable-next-line no-undef

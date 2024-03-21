@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-undef
-const Products = require("../models/Product")
+const Products = require("../models/product")
 // eslint-disable-next-line no-undef
-const Users = require("../models/User")
+const Users = require("../models/user")
 // eslint-disable-next-line no-undef
 const { getUser } = require("../config/getUser")
 const getWishlist = async (req, res) => {
