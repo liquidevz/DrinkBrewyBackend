@@ -25,14 +25,23 @@ const getUsersForAdmin = async (req, res) => {
 		const users = await User.find(nameQuery, null, {
 			skip: skip,
 			limit: parseInt(limit),
-		}).sort({
-			createdAt: -1,
 		})
-
+			.populate({
+				path: "orders", // Path to the orders field in the User model
+			})
+			.sort({
+				createdAt: -1,
+			})
+		const usersWithOrderQuantity = users.map(user => {
+			const totalOrders = user.orders.length // Get the length of the orders array
+			return { ...user._doc, totalOrders } // Merge with existing user data
+		})
 		return res.status(200).json({
 			success: true,
-			data: users,
+			data: usersWithOrderQuantity,
+			total: users,
 			count: Math.ceil(totalUserCounts / parseInt(limit)),
+			currentPage: page,
 		})
 	} catch (error) {
 		return res.status(400).json({ success: false, message: error.message })
