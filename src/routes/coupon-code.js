@@ -2,7 +2,7 @@
 const express = require("express")
 const router = express.Router()
 // eslint-disable-next-line no-undef
-const couponCodeRoutes = require("../controllers/coupon-code").default
+const couponCodeRoutes = require("../controllers/coupon-code")
 // Import verifyToken function
 // eslint-disable-next-line no-undef
 const verifyToken = require("../config/jwt")
