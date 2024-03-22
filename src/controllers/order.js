@@ -32,8 +32,14 @@ function readHTMLTemplate() {
 
 const createOrder = async (req, res) => {
 	try {
-		const { items, user, paymentMethod, paymentId, couponCode, totalItems } =
-			await req.body
+		const {
+			items,
+			user,
+			paymentMethod,
+			paymentId,
+			couponCode,
+			totalItems,
+		} = await req.body
 
 		// eslint-disable-next-line no-undef
 		const shipping = parseInt(process.env.SHIPPING_FEE || 0)
@@ -197,16 +203,16 @@ const getOrderforAdmin = async (req, res) => {
 		const skip = parseInt(limit) * (parseInt(page) - 1) || 0
 		const totalOrderCount = await Orders.countDocuments({
 			$or: [
-				{ "user.firstName": { $regex: search, $options: "i" } },
-				{ "user.lastName": { $regex: search, $options: "i" } },
+				{ "user.firstName": { $regex: new RegExp(search, "i") } },
+				{ "user.lastName": { $regex: new RegExp(search, "i") } },
 			],
 		})
 
 		const orders = await Orders.find(
 			{
 				$or: [
-					{ "user.firstName": { $regex: search, $options: "i" } },
-					{ "user.lastName": { $regex: search, $options: "i" } },
+					{ "user.firstName": { $regex: new RegExp(search, "i") } },
+					{ "user.lastName": { $regex: new RegExp(search, "i") } },
 				],
 			},
 			null,
