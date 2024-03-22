@@ -1,19 +1,16 @@
-
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-
-const dashboard = require("../controllers/dashboard");
+const dashboard = require('../controllers/dashboard');
 
 // Import verifyToken function
-
-const verifyToken = require("../config/jwt");
+const verifyToken = require('../config/jwt');
 
 router.get(
-  "/admin/dashboard-analytics",
+  '/admin/dashboard-analytics',
   verifyToken,
-  dashboard.getDashboardAnalytics,
+  dashboard.getDashboardAnalytics
 );
 
-router.get("/admin/notifications", verifyToken, dashboard.getNofications);
+router.get('/admin/notifications', verifyToken, dashboard.getNofications);
 
 module.exports = router;

@@ -1,6 +1,5 @@
 // Import the cloudinary module
-
-const cloudinary = require("./cloudinary");
+const cloudinary = require('./cloudinary');
 
 const uploadOnCloudinary = (file) => {
   return cloudinary.uploader.unsigned_upload(file);
@@ -29,7 +28,7 @@ exports.multiFileUploader = async (images) => {
   const uploaded = imageUrlList.map((v) => {
     return {
       _id: v.public_id,
-      url: v.secure_url,
+      url: v.secure_url
     };
   });
   return uploaded;
@@ -39,7 +38,7 @@ exports.singleFileUploader = async (image) => {
   const result = await uploadOnCloudinary(image);
   const uploaded = {
     _id: result.public_id,
-    url: result.secure_url,
+    url: result.secure_url
   };
   return uploaded;
 };
@@ -48,7 +47,6 @@ exports.singleFileDelete = async (id) => {
   const result = await deleteFromCloudinary(id);
   return result;
 };
-
 
 exports.multiFilesDelete = async (images) => {
   var imageUrlList = [];

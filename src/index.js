@@ -1,25 +1,17 @@
 'use strict';
-
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-// const Brand =require("../src/models/Brand")
 const dotenv = require('dotenv');
-
 const bodyParser = require('body-parser');
+// Load environment variables from .env file
 dotenv.config();
-const corsConfig = {
-  origin: '*',
-  Credential: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-};
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 
 // Middleware
-app.options('', cors(corsConfig));
-app.use(cors(corsConfig));
+app.use(cors());
 app.use(bodyParser.json());
 
 // Connect to MongoDB
@@ -39,40 +31,24 @@ mongoose
   });
 
 // Routes
-
 const homeRoutes = require('./routes/home');
-
 const authRoutes = require('./routes/auth');
-
 const brandRoutes = require('./routes/brand');
-
 const categoryRoutes = require('./routes/category');
-
 const subcategoryRoutes = require('./routes/subcategory');
-
 const newsletterRoutes = require('./routes/newsletter');
-
 const productRoutes = require('./routes/product');
-
 const dashboardRoutes = require('./routes/dashboard');
-
 const searchRoutes = require('./routes/search');
-
 const best_sellerRoutes = require('./routes/best-seller');
-
 const userRoutes = require('./routes/user');
-
 const cartRoutes = require('./routes/cart');
-
 const couponCodeRoutes = require('./routes/coupon-code');
-
 const reviewRoutes = require('./routes/review');
-
 const wishlistRoutes = require('./routes/wishlist');
-
 const OrderRoutes = require('./routes/order');
-
 const adminRoutes = require('./routes/admin');
+
 
 app.use('/api', homeRoutes);
 app.use('/api', authRoutes);
@@ -92,17 +68,13 @@ app.use('/api', wishlistRoutes);
 app.use('/api', OrderRoutes);
 app.use('/api', adminRoutes);
 
+
 // GET API
 app.get('/', (req, res) => {
   res.send('This is a GET API');
 });
-// app.get("/test",async (req, res) => {
-// 	const data=await Brand.find({})
-// 	res.json({data:data})
-// })
 
 // Start the server
-// app.listen(PORT, () => {
-//   console.log(`Server is running on port ${PORT}`);
-// });
-export const handler = serverless(api);
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});

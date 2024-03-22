@@ -1,205 +1,201 @@
+const User = require('../models/User');
+const Categories = require('../models/Category');
+const SubCategories = require('../models/SubCategory');
 
-const User = require("../models/User")
-
-const Categories = require("../models/Category")
-
-const SubCategories = require("../models/SubCategory")
-
-const getBlurDataURL = require("../config/getBlurDataURL")
+const getBlurDataURL = require('../config/getBlurDataURL');
 
 const createCategory = async (req, res) => {
-	try {
-		const { cover, ...others } = req.body
-		// Validate if the 'blurDataURL' property exists in the logo object
+  try {
+    const { cover, ...others } = req.body;
+    // Validate if the 'blurDataURL' property exists in the logo object
 
-		// If blurDataURL is not provided, generate it using the 'getBlurDataURL' function
-		const blurDataURL = await getBlurDataURL(cover.url)
+    // If blurDataURL is not provided, generate it using the 'getBlurDataURL' function
+    const blurDataURL = await getBlurDataURL(cover.url);
 
-		await Categories.create({
-			...others,
-			cover: {
-				...cover,
-				blurDataURL,
-			},
-		})
+    await Categories.create({
+      ...others,
+      cover: {
+        ...cover,
+        blurDataURL,
+      },
+    });
 
-		res.status(201).json({ success: true, message: "category-created" })
-	} catch (error) {
-		res.status(400).json({ message: error.message })
-	}
-}
+    res.status(201).json({ success: true, message: 'category-created' });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
 
 const getAllCategories = async (req, res) => {
-	try {
-		const userCount = await User.countDocuments()
-		await SubCategories.findOne()
-		const categories = await Categories.find()
-			.sort({
-				createdAt: -1,
-			})
-			.select(["name", "slug", "subCategories"])
-			.populate({ path: "subCategories", select: ["name", "slug"] })
+  try {
+    const userCount = await User.countDocuments();
+    await SubCategories.findOne();
+    const categories = await Categories.find()
+      .sort({
+        createdAt: -1,
+      })
+      .select(['name', 'slug', 'subCategories'])
+      .populate({ path: 'subCategories', select: ['name', 'slug'] });
 
-		res.status(201).json({
-			success: true,
-			data: categories,
-			...(!userCount && {
-				adminPopup: true,
-			}),
-		})
-	} catch (error) {
-		res.status(400).json({ message: error.message })
-	}
-}
+    res.status(201).json({
+      success: true,
+      data: categories,
+      ...(!userCount && {
+        adminPopup: true,
+      }),
+    });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
 
 const getCategoryBySlug = async (req, res) => {
-	try {
-		const { slug } = req.params
-		const category = await Categories.findOne({ slug }).select([
-			"metaTitle",
-			"metaDescription",
-			"cover.url",
-			"slug",
-		])
+  try {
+    const { slug } = req.params;
+    const category = await Categories.findOne({ slug }).select([
+      'metaTitle',
+      'metaDescription',
+      'cover.url',
+      'slug',
+    ]);
 
-		if (!category) {
-			return res.status(400).json({
-				message: "item-could-not-be-found",
-			})
-		}
+    if (!category) {
+      return res.status(400).json({
+        message: 'item-could-not-be-found',
+      });
+    }
 
-		res.status(201).json({ success: true, data: category })
-	} catch (error) {
-		res.status(400).json({
-			message: "category-could-not-be-found",
-		})
-	}
-}
+    res.status(201).json({ success: true, data: category });
+  } catch (error) {
+    res.status(400).json({
+      message: 'category-could-not-be-found',
+    });
+  }
+};
 const updateCategoryBySlug = async (req, res) => {
-	try {
-		const { slug } = req.params
-		const { cover, ...others } = req.body
-		// Validate if the 'blurDataURL' property exists in the logo object
-		if (!cover.blurDataURL) {
-			// If blurDataURL is not provided, generate it using the 'getBlurDataURL' function
-			cover.blurDataURL = await getBlurDataURL(cover.url)
-		}
-		await Categories.findOneAndUpdate(
-			{ slug },
-			{
-				...others,
-				cover: {
-					...cover,
-				},
-			},
-			{ new: true, runValidators: true }
-		)
+  try {
+    const { slug } = req.params;
+    const { cover, ...others } = req.body;
+    // Validate if the 'blurDataURL' property exists in the logo object
+    if (!cover.blurDataURL) {
+      // If blurDataURL is not provided, generate it using the 'getBlurDataURL' function
+      cover.blurDataURL = await getBlurDataURL(cover.url);
+    }
+    await Categories.findOneAndUpdate(
+      { slug },
+      {
+        ...others,
+        cover: {
+          ...cover,
+        },
+      },
+      { new: true, runValidators: true }
+    );
 
-		res.status(201).json({ success: true, message: "category-updated" })
-	} catch (error) {
-		res.status(400).json({ message: error.message })
-	}
-}
+    res.status(201).json({ success: true, message: 'category-updated' });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
 
 const deleteCategoryBySlug = async (req, res) => {
-	try {
-		const { slug } = req.params
+  try {
+    const { slug } = req.params;
 
-		const category = await Categories.findOneAndDelete({ slug })
+    const category = await Categories.findOneAndDelete({ slug });
 
-		if (!category) {
-			return res.status(400).json({
-				success: false,
-				message: "category-could-not-be-found",
-			})
-		}
+    if (!category) {
+      return res.status(400).json({
+        success: false,
+        message: 'category-could-not-be-found',
+      });
+    }
 
-		res
-			.status(201)
-			.json({ success: true, message: "category deleted successfully" })
-	} catch (error) {
-		res.status(400).json({ message: error.message })
-	}
-}
+    res
+      .status(201)
+      .json({ success: true, message: 'category deleted successfully' });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
 const getCategories = async (req, res) => {
-	try {
-		const { limit = 10, page = 1, search = "" } = req.query
+  try {
+    const { limit = 10, page = 1, search = '' } = req.query;
 
-		const skip = parseInt(limit) || 10
-		const totalCategories = await Categories.find({
-			name: { $regex: search, $options: "i" },
-		})
-		const categories = await Categories.find(
-			{
-				name: { $regex: search, $options: "i" },
-			},
-			null,
-			{
-				skip: skip * (parseInt(page) - 1 || 0),
-				limit: skip,
-			}
-		).sort({
-			createdAt: -1,
-		})
+    const skip = parseInt(limit) || 10;
+    const totalCategories = await Categories.find({
+      name: { $regex: search, $options: 'i' },
+    });
+    const categories = await Categories.find(
+      {
+        name: { $regex: search, $options: 'i' },
+      },
+      null,
+      {
+        skip: skip * (parseInt(page) - 1 || 0),
+        limit: skip,
+      }
+    ).sort({
+      createdAt: -1,
+    });
 
-		res.status(201).json({
-			success: true,
-			data: categories,
-			count: Math.ceil(totalCategories.length / skip),
-		})
-	} catch (error) {
-		res.status(400).json({ success: false, message: error.message })
-	}
-}
+    res.status(201).json({
+      success: true,
+      data: categories,
+      count: Math.ceil(totalCategories.length / skip),
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
 const getCategoriesSlugs = async (req, res) => {
-	try {
-		const categories = await Categories.find().select("slug")
+  try {
+    const categories = await Categories.find().select('slug');
 
-		res.status(201).json({
-			success: true,
-			data: categories,
-		})
-	} catch (error) {
-		res.status(400).json({ success: false, message: error.message })
-	}
-}
+    res.status(201).json({
+      success: true,
+      data: categories,
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
 const getSubCategoriesSlugs = async (req, res) => {
-	try {
-		const categories = await SubCategories.find()
-			.select("slug")
-			.populate({ path: "parentCategory", select: ["slug"] })
+  try {
+    const categories = await SubCategories.find()
+      .select('slug')
+      .populate({ path: 'parentCategory', select: ['slug'] });
 
-		res.status(201).json({
-			success: true,
-			data: categories,
-		})
-	} catch (error) {
-		res.status(400).json({ success: false, message: error.message })
-	}
-}
+    res.status(201).json({
+      success: true,
+      data: categories,
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
 const getCategoryNameBySlug = async (req, res) => {
-	try {
-		const category = await Categories.findOne({ slug: req.params.slug }).select(
-			["name", "slug"]
-		)
+  try {
+    const category = await Categories.findOne({ slug: req.params.slug }).select(
+      ['name', 'slug']
+    );
 
-		res.status(201).json({
-			success: true,
-			data: category,
-		})
-	} catch (error) {
-		res.status(400).json({ success: false, message: error.message })
-	}
-}
-
+    res.status(201).json({
+      success: true,
+      data: category,
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
 module.exports = {
-	createCategory,
-	getCategories,
-	getAllCategories,
-	getCategoryBySlug,
-	updateCategoryBySlug,
-	deleteCategoryBySlug,
-	getCategoriesSlugs,
-	getSubCategoriesSlugs,
-	getCategoryNameBySlug,
-}
+  createCategory,
+  getCategories,
+  getAllCategories,
+  getCategoryBySlug,
+  updateCategoryBySlug,
+  deleteCategoryBySlug,
+  getCategoriesSlugs,
+  getSubCategoriesSlugs,
+  getCategoryNameBySlug,
+};

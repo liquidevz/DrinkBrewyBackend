@@ -1,15 +1,12 @@
+const express = require("express");
+const router = express.Router();
+const adminController = require("../controllers/admin");
+const verifyToken = require("../config/jwt");
 
-const express = require("express")
-const router = express.Router()
+router.get("/admin/users", adminController.getUsersForAdmin);
 
-const adminController = require("../controllers/admin")
+router.get("/admin/users/:id", adminController.getOrdersByUid);
 
-const verifyToken = require("../config/jwt")
+router.put("/admin/users/:id", adminController.UpdateRoleForAdmin);
 
-router.get("/admin/users", verifyToken, adminController.getUsersForAdmin)
-
-router.get("/admin/users/:id", verifyToken, adminController.getOrdersByUid)
-
-router.put("/admin/users/:id", verifyToken, adminController.UpdateRoleForAdmin)
-
-module.exports = router
+module.exports = router;
