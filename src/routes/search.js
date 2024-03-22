@@ -1,9 +1,9 @@
-// eslint-disable-next-line no-undef
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-// eslint-disable-next-line no-undef
-const search = require("../controllers/search");
+const search = require('../controllers/search');
 
-router.post("/search", search.Search);
-// eslint-disable-next-line no-undef
+
+router.post('/search', search.Search);
+
+
 module.exports = router;

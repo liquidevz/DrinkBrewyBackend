@@ -1,58 +1,58 @@
-// eslint-disable-next-line no-undef
-const Products = require("../models/product")
-// eslint-disable-next-line no-undef
-const Categories = require("../models/category")
-// eslint-disable-next-line no-undef
-const Brands = require("../models/brand")
 
-const Search = async (req, res) => {
-	try {
-		const { query } = await req.body
-		const categories = await Categories.find(
-			{
-				name: {
-					$regex: query,
-					$options: "i",
-				},
-				status: { $ne: "disabled" },
-			},
-			null,
-			{ limit: 10 }
-		).select(["name", "cover", "_id", "slug"])
-		const products = await Products.find(
-			{
-				name: {
-					$regex: query,
-					$options: "i",
-				},
-				status: { $ne: "disabled" },
-			},
-			null,
-			{ limit: 10 }
-		)
-			.populate("category")
-			.select(["name", "priceSale", "images", "_id", "category", "slug"])
+const Products = require('../models/Product');
+const Categories = require('../models/Category');
+const Brands = require('../models/Brand');
 
-		const brands = await Brands.find(
-			{
-				name: {
-					$regex: query,
-					$options: "i",
-				},
-				status: { $ne: "disabled" },
-			},
-			null,
-			{ limit: 10 }
-		).select(["name", "logo", "_id", "slug"])
-		return res.status(200).json({
-			success: true,
-			products,
-			categories,
-			brands,
-		})
-	} catch (error) {
-		return res.status(400).json({ success: false, message: error.message })
-	}
+const Search=async(req,res)=> {
+  try {
+    const { query } = await req.body;
+    const categories = await Categories.find(
+      {
+        name: {
+          $regex: query,
+          $options: 'i'
+        },
+        status: { $ne: 'disabled' }
+      },
+      null,
+      { limit: 10 }
+    ).select(['name', 'cover', '_id', 'slug']);
+    const products = await Products.find(
+      {
+        name: {
+          $regex: query,
+          $options: 'i'
+        },
+        status: { $ne: 'disabled' }
+      },
+      null,
+      { limit: 10 }
+    )
+      .populate('category')
+      .select(['name', 'priceSale', 'images', '_id', 'category', 'slug']);
+
+    const brands = await Brands.find(
+      {
+        name: {
+          $regex: query,
+          $options: 'i'
+        },
+        status: { $ne: 'disabled' }
+      },
+      null,
+      { limit: 10 }
+    ).select(['name', 'logo', '_id', 'slug']);
+    return res.status(200).json(
+      {
+        success: true,
+        products,
+        categories,
+        brands
+      },
+    );
+  } catch (error) {
+    return res.status(400).json({ success: false, message: error.message });
+  }
 }
-// eslint-disable-next-line no-undef
-module.exports = { Search }
+
+module.exports = { Search };

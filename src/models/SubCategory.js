@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
-const CategorySchema = new mongoose.Schema(
+/* Define the interface for the SubCategory document */
+const SubCategorySchema = new mongoose.Schema(
   {
     cover: {
       _id: {
@@ -13,8 +14,8 @@ const CategorySchema = new mongoose.Schema(
       },
       blurDataURL: {
         type: String,
-        required: [true, 'image-blur-data-url-required-error']
-      }
+        required: [true, 'image-blur-data-url-required-error'],
+      },
     },
     name: {
       type: String,
@@ -23,8 +24,8 @@ const CategorySchema = new mongoose.Schema(
     },
     metaTitle: {
       type: String,
-      required: [true, 'Meta title is required.'],
-      maxlength: [100, 'Meta title cannot exceed 100 characters.'],
+      required: [true, 'Meta Title is required.'],
+      maxlength: [100, 'Meta Title cannot exceed 100 characters.'],
     },
     description: {
       type: String,
@@ -33,30 +34,26 @@ const CategorySchema = new mongoose.Schema(
     },
     metaDescription: {
       type: String,
-      required: [true, 'Meta description is required.'],
-      maxlength: [200, 'Meta description cannot exceed 200 characters.'],
+      required: [true, 'Meta Description is required.'],
+      maxlength: [200, 'Meta Description cannot exceed 200 characters.'],
     },
     slug: {
       type: String,
-      unique: true,
       required: true,
     },
     status: {
       type: String,
       required: true,
     },
-    subCategories: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'SubCategory',
-      },
-    ],
+    parentCategory: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Category',
+      required: true,
+    },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-const Category =
-  mongoose.models.Category || mongoose.model('Category', CategorySchema);
-module.exports = Category;
+module.exports =
+  mongoose.models.SubCategory ||
+  mongoose.model('SubCategory', SubCategorySchema);
