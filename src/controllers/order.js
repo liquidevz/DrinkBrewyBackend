@@ -1,18 +1,10 @@
-// eslint-disable-next-line no-undef
-const Notifications = require("../models/notification")
-// eslint-disable-next-line no-undef
-const Products = require("../models/product")
-// eslint-disable-next-line no-undef
-const Orders = require("../models/order")
-// eslint-disable-next-line no-undef
-const Coupons = require("../models/coupon-code")
-// eslint-disable-next-line no-undef
-const User = require("../models/user")
-// eslint-disable-next-line no-undef
+const Notifications = require("../models/Notification")
+const Products = require("../models/Product")
+const Orders = require("../models/Order")
+const Coupons = require("../models/CouponCode")
+const User = require("../models/User")
 const nodemailer = require("nodemailer")
-// eslint-disable-next-line no-undef
 const fs = require("fs")
-// eslint-disable-next-line no-undef
 const path = require("path")
 
 function isExpired(expirationDate) {
@@ -22,7 +14,6 @@ function isExpired(expirationDate) {
 
 function readHTMLTemplate() {
 	const htmlFilePath = path.join(
-		// eslint-disable-next-line no-undef
 		process.cwd(),
 		"src/email-templates",
 		"order.html"
@@ -40,8 +31,6 @@ const createOrder = async (req, res) => {
 			couponCode,
 			totalItems,
 		} = await req.body
-
-		// eslint-disable-next-line no-undef
 		const shipping = parseInt(process.env.SHIPPING_FEE || 0)
 
 		if (!items || !items.length) {
@@ -97,7 +86,7 @@ const createOrder = async (req, res) => {
 		discountedTotal = discountedTotal || 0
 
 		const existingUser = await User.findOne({ email: user.email })
-		console.log(discountedTotal + shipping, shipping, "Hello")
+
 		const orderCreated = await Orders.create({
 			paymentMethod,
 			paymentId,
@@ -150,15 +139,12 @@ const createOrder = async (req, res) => {
 		let transporter = nodemailer.createTransport({
 			service: "gmail",
 			auth: {
-				// eslint-disable-next-line no-undef
 				user: process.env.RECEIVING_EMAIL,
-				// eslint-disable-next-line no-undef
 				pass: process.env.EMAIL_PASSWORD,
 			},
 		})
 
 		let mailOptions = {
-			// eslint-disable-next-line no-undef
 			from: process.env.RECEIVING_EMAIL,
 			to: user.email,
 			subject: "Your Order Confirmation",
@@ -196,29 +182,36 @@ const getOrderById = async (req, res) => {
 		return res.status(400).json({ success: false, message: error.message })
 	}
 }
-const getOrderforAdmin = async (req, res) => {
+const getOrderforAdmin = async (request, { query }) => {
 	try {
-		const { limit = 10, page = 1, search = "" } = req.query
+		const { searchParams } = new URL(request.url)
+		const pageQuery = searchParams.get("page")
+		const limitQuery = searchParams.get("limit")
+		const searchQuery = searchParams.get("search")
+		const limit = parseInt(limitQuery) || 10
+		const page = parseInt(pageQuery) || 1
+		var newQuery = { ...query }
+		delete newQuery.page
+		const skip = limit * (page - 1)
 
-		const skip = parseInt(limit) * (parseInt(page) - 1) || 0
-		const totalOrderCount = await Orders.countDocuments({
+		const totalOrders = await Orders.find({
 			$or: [
-				{ "user.firstName": { $regex: new RegExp(search, "i") } },
-				{ "user.lastName": { $regex: new RegExp(search, "i") } },
+				{ "user.firstName": { $regex: searchQuery, $options: "i" } },
+				{ "user.lastName": { $regex: searchQuery, $options: "i" } },
 			],
 		})
 
 		const orders = await Orders.find(
 			{
 				$or: [
-					{ "user.firstName": { $regex: new RegExp(search, "i") } },
-					{ "user.lastName": { $regex: new RegExp(search, "i") } },
+					{ "user.firstName": { $regex: searchQuery, $options: "i" } },
+					{ "user.lastName": { $regex: searchQuery, $options: "i" } },
 				],
 			},
 			null,
 			{
+				limit: limit,
 				skip: skip,
-				limit: parseInt(limit),
 			}
 		).sort({
 			createdAt: -1,
@@ -227,12 +220,12 @@ const getOrderforAdmin = async (req, res) => {
 		return res.status(200).json({
 			success: true,
 			data: orders,
-			total: totalOrderCount,
-			count: Math.ceil(totalOrderCount / parseInt(limit)),
+			total: totalOrders,
+			count: Math.ceil(totalOrders / limit),
 			currentPage: page,
 		})
 	} catch (error) {
-		return res.status(500).json({ success: false, message: error.message })
+		return res.status(400).json({ success: false, message: error.message })
 	}
 }
 
@@ -321,7 +314,6 @@ const deleteOrderForAdmin = async (req, res) => {
 	}
 }
 
-// eslint-disable-next-line no-undef
 module.exports = {
 	createOrder,
 	getOrderById,
