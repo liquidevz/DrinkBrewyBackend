@@ -49,6 +49,24 @@ const getAllCategories = async (req, res) => {
   }
 };
 
+const getCategoryByAdmin = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const category = await Categories.findOne({ slug });
+
+    if (!category) {
+      return res.status(400).json({
+        message: 'item-could-not-be-found',
+      });
+    }
+
+    res.status(201).json({ success: true, data: category });
+  } catch (error) {
+    res.status(400).json({
+      message: 'category-could-not-be-found',
+    });
+  }
+};
 const getCategoryBySlug = async (req, res) => {
   try {
     const { slug } = req.params;
@@ -197,5 +215,6 @@ module.exports = {
   deleteCategoryBySlug,
   getCategoriesSlugs,
   getSubCategoriesSlugs,
+  getCategoryByAdmin,
   getCategoryNameBySlug,
 };
