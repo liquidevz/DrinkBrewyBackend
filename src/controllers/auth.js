@@ -211,7 +211,6 @@ const forgetPassword = async (req, res) => {
 		});
 		// Constructing the link with the token
 		const resetPasswordLink = `${request.origin}/auth/reset-password/${token}`;
-		console.log(resetPasswordLink);
 
 		// Path to the HTML file
 		const htmlFilePath = path.join(
