@@ -64,6 +64,7 @@ const getSubCategoriesBySlug = async (req, res) => {
   try {
     const { slug } = req.params;
     const subcategories = await SubCategories.findOne({ slug });
+    const categories = await Category.find().select(['name']);
 
     if (!subcategories) {
       return res.status(400).json({
@@ -71,7 +72,7 @@ const getSubCategoriesBySlug = async (req, res) => {
       });
     }
 
-    res.status(201).json({ success: true, data: subcategories });
+    res.status(201).json({ success: true, data: subcategories, categories });
   } catch (error) {
     res.status(400).json({
       message: 'subcategories-could-not-be-found',
