@@ -1,15 +1,15 @@
-const Notifications = require("../models/Notification")
-const Products = require("../models/Product")
-const Orders = require("../models/Order")
-const Coupons = require("../models/CouponCode")
-const User = require("../models/User")
-const nodemailer = require("nodemailer")
-const fs = require("fs")
-const path = require("path")
+const Notifications = require("../models/Notification");
+const Products = require("../models/Product");
+const Orders = require("../models/Order");
+const Coupons = require("../models/CouponCode");
+const User = require("../models/User");
+const nodemailer = require("nodemailer");
+const fs = require("fs");
+const path = require("path");
 
 function isExpired(expirationDate) {
-	const currentDateTime = new Date()
-	return currentDateTime >= new Date(expirationDate)
+	const currentDateTime = new Date();
+	return currentDateTime >= new Date(expirationDate);
 }
 
 function readHTMLTemplate() {
@@ -17,8 +17,8 @@ function readHTMLTemplate() {
 		process.cwd(),
 		"src/email-templates",
 		"order.html"
-	)
-	return fs.readFileSync(htmlFilePath, "utf8")
+	);
+	return fs.readFileSync(htmlFilePath, "utf8");
 }
 
 const createOrder = async (req, res) => {
@@ -30,62 +30,74 @@ const createOrder = async (req, res) => {
 			paymentId,
 			couponCode,
 			totalItems,
-		} = await req.body
-		const shipping = parseInt(process.env.SHIPPING_FEE || 0)
+		} = await req.body;
+		const shipping = parseInt(process.env.SHIPPING_FEE || 0);
 
 		if (!items || !items.length) {
 			return res
 				.status(400)
-				.json({ success: false, message: "Please provide item(s)" })
+				.json({ success: false, message: "Please provide item(s)" });
 		}
 
 		const products = await Products.find({
 			_id: { $in: items.map(item => item.pid) },
-		})
+		});
 
 		const updatedItems = items.map(item => {
-			const product = products.find(p => p._id.toString() === item.pid)
-			const price = product ? product.priceSale : 0
-			const total = price * item.quantity
+			const product = products.find(p => p._id.toString() === item.pid);
+			const price = product ? product.priceSale : 0;
+			const total = price * item.quantity;
 
 			Products.findOneAndUpdate(
 				{ _id: item.pid, available: { $gte: 0 } },
 				{ $inc: { available: -item.quantity, sold: item.quantity } },
 				{ new: true, runValidators: true }
-			).exec()
+			).exec();
 
 			return {
 				...item,
 				total,
 				imageUrl: product.images.length > 0 ? product.images[0].url : "",
-			}
-		})
+			};
+		});
 
-		const grandTotal = updatedItems.reduce((acc, item) => acc + item.total, 0)
-		let discount = 0
+		const grandTotal = updatedItems.reduce((acc, item) => acc + item.total, 0);
+		let discount = 0;
 
 		if (couponCode) {
-			const couponData = await Coupons.findOne({ code: couponCode })
+			const couponData = await Coupons.findOne({ code: couponCode });
 
-			const expired = isExpired(couponData.expire)
+			if (!couponData) {
+				return res
+					.status(400)
+					.json({ success: false, message: "Invalid coupon code" });
+			}
+
+			const expired = isExpired(couponData.expire);
 			if (expired) {
 				return res
 					.status(400)
-					.json({ success: false, message: "Coupon code is expired" })
+					.json({ success: false, message: "Coupon code is expired" });
 			}
 
-			if (couponData && couponData.type === "percent") {
-				const percentLess = couponData.discount
-				discount = (percentLess / 100) * grandTotal
-			} else if (couponData) {
-				discount = couponData.discount
+			// Add the user's email to the usedBy array of the coupon code
+			await Coupons.findOneAndUpdate(
+				{ code: couponCode },
+				{ $addToSet: { usedBy: user.email } }
+			);
+
+			if (couponData.type === "percent") {
+				const percentLess = couponData.discount;
+				discount = (percentLess / 100) * grandTotal;
+			} else {
+				discount = couponData.discount;
 			}
 		}
 
-		let discountedTotal = grandTotal - discount
-		discountedTotal = discountedTotal || 0
+		let discountedTotal = grandTotal - discount;
+		discountedTotal = discountedTotal || 0;
 
-		const existingUser = await User.findOne({ email: user.email })
+		const existingUser = await User.findOne({ email: user.email });
 
 		const orderCreated = await Orders.create({
 			paymentMethod,
@@ -98,7 +110,7 @@ const createOrder = async (req, res) => {
 			user: existingUser ? { ...user, _id: existingUser._id } : user,
 			totalItems,
 			status: "pending",
-		})
+		});
 
 		await Notifications.create({
 			opened: false,
@@ -107,16 +119,16 @@ const createOrder = async (req, res) => {
 			orderId: orderCreated._id,
 			city: user.city,
 			cover: user?.cover?.url || "",
-		})
+		});
 
-		let htmlContent = readHTMLTemplate()
+		let htmlContent = readHTMLTemplate();
 
 		htmlContent = htmlContent.replace(
 			/{{recipientName}}/g,
 			`${user.firstName} ${user.lastName}`
-		)
+		);
 
-		let itemsHtml = ""
+		let itemsHtml = "";
 		updatedItems.forEach(item => {
 			itemsHtml += `
         <tr>
@@ -128,13 +140,13 @@ const createOrder = async (req, res) => {
           <td style="border-bottom: 1px solid #e4e4e4; padding: 10px">${item.quantity}</td>
           <td style="border-bottom: 1px solid #e4e4e4; padding: 10px">${item.priceSale}</td>
         </tr>
-      `
-		})
+      `;
+		});
 
-		htmlContent = htmlContent.replace(/{{items}}/g, itemsHtml)
-		htmlContent = htmlContent.replace(/{{grandTotal}}/g, orderCreated.subTotal)
-		htmlContent = htmlContent.replace(/{{Shipping}}/g, orderCreated.shipping)
-		htmlContent = htmlContent.replace(/{{subTotal}}/g, orderCreated.total)
+		htmlContent = htmlContent.replace(/{{items}}/g, itemsHtml);
+		htmlContent = htmlContent.replace(/{{grandTotal}}/g, orderCreated.subTotal);
+		htmlContent = htmlContent.replace(/{{Shipping}}/g, orderCreated.shipping);
+		htmlContent = htmlContent.replace(/{{subTotal}}/g, orderCreated.total);
 
 		let transporter = nodemailer.createTransport({
 			service: "gmail",
@@ -142,57 +154,58 @@ const createOrder = async (req, res) => {
 				user: process.env.RECEIVING_EMAIL,
 				pass: process.env.EMAIL_PASSWORD,
 			},
-		})
+		});
 
 		let mailOptions = {
 			from: process.env.RECEIVING_EMAIL,
 			to: user.email,
 			subject: "Your Order Confirmation",
 			html: htmlContent,
-		}
+		};
 
-		await transporter.sendMail(mailOptions)
+		await transporter.sendMail(mailOptions);
 
 		return res.status(201).json({
 			success: true,
 			message: "Order Placed",
 			orderId: orderCreated._id,
 			data: items.name,
-		})
+		});
 	} catch (error) {
-		return res.status(400).json({ success: false, message: error.message })
+		return res.status(400).json({ success: false, message: error.message });
 	}
-}
+};
+
 const getOrderById = async (req, res) => {
 	try {
-		const id = req.params.id
-		const orderGet = await Orders.findById(id) // Remove curly braces around _id: id
+		const id = req.params.id;
+		const orderGet = await Orders.findById(id); // Remove curly braces around _id: id
 
 		if (!orderGet) {
 			return res
 				.status(404)
-				.json({ success: false, message: "Order not found" })
+				.json({ success: false, message: "Order not found" });
 		}
 
 		return res.status(200).json({
 			success: true,
 			data: orderGet,
-		})
+		});
 	} catch (error) {
-		return res.status(400).json({ success: false, message: error.message })
+		return res.status(400).json({ success: false, message: error.message });
 	}
-}
+};
 const getOrderforAdmin = async (req, res) => {
 	try {
-		const { limit = 10, page = 1, search = "" } = req.query
+		const { limit = 10, page = 1, search = "" } = req.query;
 
-		const skip = parseInt(limit) * (parseInt(page) - 1) || 0
+		const skip = parseInt(limit) * (parseInt(page) - 1) || 0;
 		const totalOrderCount = await Orders.countDocuments({
 			$or: [
 				{ "user.firstName": { $regex: new RegExp(search, "i") } },
 				{ "user.lastName": { $regex: new RegExp(search, "i") } },
 			],
-		})
+		});
 
 		const orders = await Orders.find(
 			{
@@ -208,7 +221,7 @@ const getOrderforAdmin = async (req, res) => {
 			}
 		).sort({
 			createdAt: -1,
-		})
+		});
 
 		return res.status(200).json({
 			success: true,
@@ -216,15 +229,15 @@ const getOrderforAdmin = async (req, res) => {
 			total: totalOrderCount,
 			count: Math.ceil(totalOrderCount / parseInt(limit)),
 			currentPage: page,
-		})
+		});
 	} catch (error) {
-		return res.status(500).json({ success: false, message: error.message })
+		return res.status(500).json({ success: false, message: error.message });
 	}
-}
+};
 
 const getOneOrderForAdmin = async (req, res) => {
 	try {
-		const id = req.params.id
+		const id = req.params.id;
 		await Notifications.findOneAndUpdate(
 			{ orderId: id },
 			{
@@ -234,78 +247,78 @@ const getOneOrderForAdmin = async (req, res) => {
 				new: true,
 				runValidators: true,
 			}
-		)
-		const orderGet = await Orders.findById({ _id: id })
+		);
+		const orderGet = await Orders.findById({ _id: id });
 		if (!orderGet) {
 			return res.status(404).json({
 				success: false,
 				message: "Order Not Found",
-			})
+			});
 		}
 
 		return res.status(200).json({
 			success: true,
 			data: orderGet,
-		})
+		});
 	} catch (error) {
-		return res.status(400).json({ success: false, message: error.message })
+		return res.status(400).json({ success: false, message: error.message });
 	}
-}
+};
 const updateOrderForAdmin = async (req, res) => {
 	try {
-		const id = req.params.id
-		const data = await req.body
+		const id = req.params.id;
+		const data = await req.body;
 		const order = await Orders.findByIdAndUpdate(id, data, {
 			new: true,
 			runValidators: true,
-		})
+		});
 		if (!order) {
 			return res.status(404).json({
 				success: false,
 				message: "Order Not Found",
-			})
+			});
 		}
 		return res.status(200).json({
 			success: true,
 			message: "Order Updated",
-		})
+		});
 	} catch (error) {
-		return res.status(400).json({ success: false, message: error.message })
+		return res.status(400).json({ success: false, message: error.message });
 	}
-}
+};
 const deleteOrderForAdmin = async (req, res) => {
 	try {
-		const orderId = req.params.id
+		const orderId = req.params.id;
 
 		// Find the order to be deleted
-		const order = await Orders.findById(orderId)
+		const order = await Orders.findById(orderId);
 		if (!order) {
 			return res.status(404).json({
 				success: false,
 				message: "Order Not Found",
-			})
+			});
 		}
 
 		// Delete the order from the Orders collection
-		await Orders.findByIdAndDelete(orderId)
+		await Orders.findByIdAndDelete(orderId);
 
 		// Remove the order ID from the user's order array
 		await User.findOneAndUpdate(
 			{ _id: order.user },
 			{ $pull: { orders: orderId } }
-		)
+		);
 
 		// Delete notifications related to the order
-		await Notifications.deleteMany({ orderId })
+		await Notifications.deleteMany({ orderId });
 
 		return res.status(200).json({
 			success: true,
 			message: "Order Deleted",
-		})
+		});
 	} catch (error) {
-		return res.status(400).json({ success: false, message: error.message })
+		return res.status(400).json({ success: false, message: error.message });
 	}
-}
+};
 
 module.exports = {
 	createOrder,
@@ -314,4 +327,4 @@ module.exports = {
 	getOneOrderForAdmin,
 	updateOrderForAdmin,
 	deleteOrderForAdmin,
-}
+};
