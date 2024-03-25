@@ -3,7 +3,7 @@ const router = express.Router();
 const authController = require("../controllers/auth");
 const verifyToken = require("../config/jwt");
 
-router.post("/auth/register", authController.register);
+router.post("/auth/register", authController.registerUser);
 
 router.post("/auth/login", authController.loginUser);
 
