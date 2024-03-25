@@ -211,12 +211,13 @@ const forgetPassword = async (req, res) => {
 		});
 		// Constructing the link with the token
 		const resetPasswordLink = `${request.origin}/auth/reset-password/${token}`;
+		console.log(resetPasswordLink);
 
 		// Path to the HTML file
 		const htmlFilePath = path.join(
 			process.cwd(),
 			"src/email-templates",
-			"forget-password.html"
+			"forget.html"
 		);
 
 		// Read HTML file content
@@ -226,7 +227,7 @@ const forgetPassword = async (req, res) => {
 		// htmlContent = htmlContent.replace(
 		//   /href="javascript:void\(0\);"/g,
 		//   `href="${resetPasswordLink}"`
-		// );
+		// )
 		htmlContent = htmlContent.replace(
 			/href="javascript:void\(0\);"/g,
 			`href="${resetPasswordLink}"`
