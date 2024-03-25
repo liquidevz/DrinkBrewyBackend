@@ -1,7 +1,6 @@
 const Brands = require('../models/Brand');
 const getBlurDataURL = require('../config/getBlurDataURL');
-const {singleFileDelete} = require('../config/uploader');
-
+const { singleFileDelete } = require('../config/uploader');
 
 const createBrand = async (req, res) => {
   try {
@@ -39,9 +38,11 @@ module.exports = createBrand;
 
 const getAllBrands = async (req, res) => {
   try {
-    const brands = await Brands.find().sort({
-      createdAt: -1,
-    });
+    const brands = await Brands.find()
+      .sort({
+        createdAt: -1,
+      })
+      .select(['name']);
 
     res.status(201).json({
       success: true,

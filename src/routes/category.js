@@ -12,7 +12,7 @@ router.get('/admin/categories', verifyToken, categories.getCategories);
 router.get(
   '/admin/categories/:slug',
   verifyToken,
-  categories.getCategoryBySlug
+  categories.getCategoryByAdmin
 );
 
 router.put(
@@ -30,7 +30,7 @@ router.get('/admin/categories/all', verifyToken, categories.getCategories);
 // User routes
 
 router.get('/categories', categories.getCategories);
-router.get('/categories/all', categories.getAllCategories);
+router.get('/all-categories', categories.getAllCategories);
 router.get('/categories-slugs', categories.getCategoriesSlugs);
 router.get('/subcategories-slugs', categories.getSubCategoriesSlugs);
 router.get('/categories/:slug', categories.getCategoryBySlug);
