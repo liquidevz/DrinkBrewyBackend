@@ -4,6 +4,7 @@ const Product = require("../models/Product");
 const Category = require("../models/Category");
 const SubCategory = require("../models/SubCategory");
 const _ = require("lodash");
+const { multiFilesDelete } = require("../config/uploader");
 const blurDataUrl = require("../config/getBlurDataURL");
 const getProducts = async (req, res) => {
 	try {
@@ -191,7 +192,7 @@ const getFilters = async (req, res) => {
 		});
 	}
 };
-async function GetAllProductsForAdmin(request, response) {
+const GetAllProductsByAdmin = async (request, response) => {
 	try {
 		const {
 			page: pageQuery,
@@ -273,8 +274,8 @@ async function GetAllProductsForAdmin(request, response) {
 	} catch (error) {
 		response.status(400).json({ success: false, message: error.message });
 	}
-}
-async function createProduct(req, res) {
+};
+const createProduct = async (req, res) => {
 	try {
 		const { images, ...body } = req.body;
 
@@ -298,9 +299,9 @@ async function createProduct(req, res) {
 	} catch (error) {
 		res.status(400).json({ success: false, message: error.message });
 	}
-}
+};
 
-async function getOneProductBySlug(req, res) {
+const getOneProductBySlug = async (req, res) => {
 	try {
 		const product = await Product.findOne({ slug: req.params.slug });
 		const category = await Category.findById(product.category).select([
@@ -349,7 +350,7 @@ async function getOneProductBySlug(req, res) {
 	} catch (error) {
 		return res.status(400).json({ success: false, error: error.message });
 	}
-}
+};
 const updateProductBySlug = async (req, res) => {
 	try {
 		const { slug } = req.params;
@@ -384,12 +385,20 @@ async function deletedProductBySlug(req, res) {
 	try {
 		const slug = req.params.slug;
 		const product = await Product.findOne({ slug: slug });
-		const length = product?.images?.length || 0;
+		if (!product) {
+			return res.status(404).json({
+				success: false,
+				message: "Item Not Found",
+			});
+		}
+		// const length = product?.images?.length || 0;
 		// for (let i = 0; i < length; i++) {
 		//   await multiFilesDelete(product?.images[i]);
 		// }
-
-		const deleteProduct = await Product.deleteOne({ slug: req.params.slug });
+		if (product && product.images && product.images.length > 0) {
+			await multiFilesDelete(product.images);
+		}
+		const deleteProduct = await Product.deleteOne({ slug: slug });
 		if (!deleteProduct) {
 			return res.status(400).json({
 				success: false,
@@ -524,7 +533,7 @@ const getAllProductSlug = async (req, res) => {
 module.exports = {
 	getProducts,
 	getFilters,
-	GetAllProductsForAdmin,
+	GetAllProductsByAdmin,
 	createProduct,
 	getOneProductBySlug,
 	updateProductBySlug,

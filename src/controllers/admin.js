@@ -71,7 +71,7 @@ const getOrdersByUid = async (req, res) => {
 	}
 };
 
-const UpdateRoleForAdmin = async (req, res) => {
+const UpdateRoleByAdmin = async (req, res) => {
 	try {
 		const id = req.params.id;
 		const userToUpdate = await User.findById(id);
@@ -108,4 +108,4 @@ const UpdateRoleForAdmin = async (req, res) => {
 		return res.status(500).json({ success: false, message: error.message });
 	}
 };
-module.exports = { getUsersByAdmin, getOrdersByUid, UpdateRoleForAdmin };
+module.exports = { getUsersByAdmin, getOrdersByUid, UpdateRoleByAdmin };

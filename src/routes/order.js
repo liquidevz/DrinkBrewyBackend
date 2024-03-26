@@ -1,16 +1,16 @@
-const express = require("express")
-const router = express.Router()
-const orderRoutes = require("../controllers/order")
+const express = require("express");
+const router = express.Router();
+const orderRoutes = require("../controllers/order");
 // Import verifyToken function
-const verifyToken = require("../config/jwt")
+const verifyToken = require("../config/jwt");
 //user routes
-router.post("/orders", orderRoutes.createOrder)
-router.get("/orders/:id", orderRoutes.getOrderById)
+router.post("/orders", orderRoutes.createOrder);
+router.get("/orders/:id", orderRoutes.getOrderById);
 
 //admin routes
-router.get("/admin/orders", verifyToken, orderRoutes.getOrderforAdmin)
-router.get("/admin/orders/:id", verifyToken, orderRoutes.getOneOrderForAdmin)
-router.put("/admin/orders/:id", verifyToken, orderRoutes.updateOrderForAdmin)
-router.delete("/admin/orders/:id", verifyToken, orderRoutes.deleteOrderForAdmin)
+router.get("/admin/orders", verifyToken, orderRoutes.getOrderByAdmin);
+router.get("/admin/orders/:id", verifyToken, orderRoutes.getOneOrderByAdmin);
+router.put("/admin/orders/:id", verifyToken, orderRoutes.updateOrderByAdmin);
+router.delete("/admin/orders/:id", verifyToken, orderRoutes.deleteOrderByAdmin);
 
-module.exports = router
+module.exports = router;

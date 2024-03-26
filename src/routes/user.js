@@ -24,7 +24,7 @@ router.get("/admin/users/:id", verifyToken, adminController.getOrdersByUid);
 router.post(
 	"/admin/users/role/:id",
 	verifyToken,
-	adminController.UpdateRoleForAdmin
+	adminController.UpdateRoleByAdmin
 );
 
 module.exports = router;

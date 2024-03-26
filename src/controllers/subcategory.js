@@ -1,8 +1,8 @@
 const SubCategories = require("../models/SubCategory");
 const Category = require("../models/Category");
 const getBlurDataURL = require("../config/getBlurDataURL");
-
-const createsubcategories = async (req, res) => {
+const { singleFileDelete } = require("../config/uploader");
+const createSubCategory = async (req, res) => {
 	try {
 		const { cover, ...others } = req.body;
 		// Validate if the 'blurDataURL' property exists in the logo object
@@ -128,6 +128,7 @@ const deleteSubCategoriesBySlug = async (req, res) => {
 		const { slug } = req.params;
 
 		const subCategory = await SubCategories.findOneAndDelete({ slug });
+		const dataaa = await singleFileDelete(subCategory.cover._id);
 		await Category.findByIdAndUpdate(subCategory.parentCategory, {
 			$pull: { subCategories: subCategory._id },
 		});
@@ -176,7 +177,7 @@ const getSubCategoryNameBySlug = async (req, res) => {
 	}
 };
 module.exports = {
-	createsubcategories,
+	createSubCategory,
 	getSubCategories,
 	getAllSubCategories,
 	getSubCategoriesBySlug,
