@@ -49,7 +49,7 @@ const createOrder = async (req, res) => {
 		if (!items || !items.length) {
 			return res
 				.status(400)
-				.json({ success: false, message: "Please provide item(s)" });
+				.json({ success: false, message: "Please Provide Item(s)" });
 		}
 
 		const products = await Products.find({
@@ -84,7 +84,7 @@ const createOrder = async (req, res) => {
 			if (expired) {
 				return res
 					.status(400)
-					.json({ success: false, message: "Coupon code is expired" });
+					.json({ success: false, message: "CouponCode Is Expired" });
 			}
 			// Add the user's email to the usedBy array of the coupon code
 			await Coupons.findOneAndUpdate(
@@ -191,7 +191,7 @@ const getOrderById = async (req, res) => {
 		if (!orderGet) {
 			return res
 				.status(404)
-				.json({ success: false, message: "Order not found" });
+				.json({ success: false, message: "Order Not Found" });
 		}
 
 		return res.status(200).json({
