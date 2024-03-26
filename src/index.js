@@ -40,14 +40,13 @@ const newsletterRoutes = require("./routes/newsletter");
 const productRoutes = require("./routes/product");
 const dashboardRoutes = require("./routes/dashboard");
 const searchRoutes = require("./routes/search");
-const best_sellerRoutes = require("./routes/best-seller");
+// const best_sellerRoutes = require("./routes/best-seller");
 const userRoutes = require("./routes/user");
 const cartRoutes = require("./routes/cart");
 const couponCodeRoutes = require("./routes/coupon-code");
 const reviewRoutes = require("./routes/review");
 const wishlistRoutes = require("./routes/wishlist");
 const OrderRoutes = require("./routes/order");
-const adminRoutes = require("./routes/admin");
 const paymentRoutes = require("./routes/payment-intents");
 
 app.use("/api", homeRoutes);
@@ -59,14 +58,13 @@ app.use("/api", newsletterRoutes);
 app.use("/api", productRoutes);
 app.use("/api", dashboardRoutes);
 app.use("/api", searchRoutes);
-app.use("/api", best_sellerRoutes);
+// app.use("/api", best_sellerRoutes);
 app.use("/api", userRoutes);
 app.use("/api", cartRoutes);
 app.use("/api", couponCodeRoutes);
 app.use("/api", reviewRoutes);
 app.use("/api", wishlistRoutes);
 app.use("/api", OrderRoutes);
-app.use("/api", adminRoutes);
 app.use("/api", paymentRoutes);
 
 // GET API
