@@ -1,7 +1,7 @@
 const User = require("../models/User");
 const Order = require("../models/Order");
 
-const getUsersForAdmin = async (req, res) => {
+const getUsersByAdmin = async (req, res) => {
 	try {
 		const { limit = 10, page = 1, search = "" } = req.query;
 
@@ -108,4 +108,4 @@ const UpdateRoleForAdmin = async (req, res) => {
 		return res.status(500).json({ success: false, message: error.message });
 	}
 };
-module.exports = { getUsersForAdmin, getOrdersByUid, UpdateRoleForAdmin };
+module.exports = { getUsersByAdmin, getOrdersByUid, UpdateRoleForAdmin };
