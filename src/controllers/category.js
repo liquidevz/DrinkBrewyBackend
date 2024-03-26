@@ -1,7 +1,7 @@
 const User = require("../models/User");
 const Categories = require("../models/Category");
 const SubCategories = require("../models/SubCategory");
-
+const { singleFileDelete } = require("../config/uploader");
 const getBlurDataURL = require("../config/getBlurDataURL");
 
 const createCategory = async (req, res) => {
@@ -127,7 +127,7 @@ const deleteCategoryBySlug = async (req, res) => {
 		const { slug } = req.params;
 
 		const category = await Categories.findOneAndDelete({ slug });
-
+		const dataaa = await singleFileDelete(category.cover._id);
 		if (!category) {
 			return res.status(400).json({
 				success: false,

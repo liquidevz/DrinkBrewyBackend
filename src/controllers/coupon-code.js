@@ -41,7 +41,7 @@ const getCouponCodeById = async (req, res) => {
 	}
 };
 
-const getCouponCodesForAdmin = async (req, res) => {
+const getCouponCodesByAdmin = async (req, res) => {
 	try {
 		const { limit = 10, page = 1 } = req.query;
 
@@ -66,7 +66,7 @@ const getCouponCodesForAdmin = async (req, res) => {
 };
 
 // POST method to create a new couponCode
-const createCouponCodeForAdmin = async (req, res) => {
+const createCouponCodeByAdmin = async (req, res) => {
 	try {
 		const data = await req.body;
 		if (!data) {
@@ -86,7 +86,7 @@ const createCouponCodeForAdmin = async (req, res) => {
 		return res.status(400).json({ success: false, message: error.message });
 	}
 };
-const getOneCouponCodeForAdmin = async (req, res) => {
+const getOneCouponCodeByAdmin = async (req, res) => {
 	try {
 		const id = req.params.id;
 		const getCouponCode = await CouponCode.findById(id);
@@ -107,7 +107,7 @@ const getOneCouponCodeForAdmin = async (req, res) => {
 	}
 };
 
-const updatedCouponCodeForAdmin = async (req, res) => {
+const updatedCouponCodeByAdmin = async (req, res) => {
 	try {
 		const id = req.params.id;
 
@@ -132,7 +132,7 @@ const updatedCouponCodeForAdmin = async (req, res) => {
 		return res.status(400).json({ success: false, message: error.message });
 	}
 };
-const deleteCouponCodeForAdmin = async (req, res) => {
+const deleteCouponCodeByAdmin = async (req, res) => {
 	try {
 		const id = req.params.id;
 		const getCouponCode = await CouponCode.findById(id);
@@ -152,10 +152,10 @@ const deleteCouponCodeForAdmin = async (req, res) => {
 };
 module.exports = {
 	getCouponCodeByCode,
-	getCouponCodesForAdmin,
-	createCouponCodeForAdmin,
-	getOneCouponCodeForAdmin,
-	updatedCouponCodeForAdmin,
-	deleteCouponCodeForAdmin,
+	getCouponCodesByAdmin,
+	createCouponCodeByAdmin,
+	getOneCouponCodeByAdmin,
+	updatedCouponCodeByAdmin,
+	deleteCouponCodeByAdmin,
 	getCouponCodeById,
 };
