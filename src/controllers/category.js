@@ -77,7 +77,7 @@ const getCategoryBySlug = async (req, res) => {
 			"description",
 			"metaTitle",
 			"metaDescription",
-			"cover.url",
+			"cover",
 			"slug",
 		]);
 
