@@ -34,8 +34,6 @@ const createBrand = async (req, res) => {
   }
 };
 
-module.exports = createBrand;
-
 const getAllBrands = async (req, res) => {
   try {
     const brands = await Brands.find()
