@@ -21,7 +21,7 @@ const getCategories = async (req, res) => {
   }
 };
 
-const getTopProducts = async (req, res) => {
+const getTopRatedProducts = async (req, res) => {
   try {
     const bestSellingProduct = await Product.aggregate([
       {
@@ -38,9 +38,10 @@ const getTopProducts = async (req, res) => {
           image: { $arrayElemAt: ['$images', 0] },
         },
       },
+
       {
         $sort: {
-          sold: -1,
+          averageRating: -1,
         },
       },
       {
@@ -92,8 +93,108 @@ const getBrands = async (req, res) => {
     });
   }
 };
+
+const getBestSellerProducts = async (req, res) => {
+  try {
+    const bestSellingProduct = await Product.aggregate([
+      {
+        $lookup: {
+          from: 'reviews',
+          localField: 'reviews',
+          foreignField: '_id',
+          as: 'reviews',
+        },
+      },
+      {
+        $addFields: {
+          averageRating: { $avg: '$reviews.rating' },
+          image: { $arrayElemAt: ['$images', 0] },
+        },
+      },
+      {
+        $sort: {
+          sold: -1,
+        },
+      },
+      {
+        $limit: 8,
+      },
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          status: 1,
+          isFeatured: 1,
+          slug: 1,
+          sku: 1,
+          price: 1,
+          priceSale: 1,
+          available: 1,
+          averageRating: 1,
+          priceSale: 1,
+          image: 1,
+          colors: 1,
+        },
+      },
+    ]);
+    return res.status(200).json({ success: true, data: bestSellingProduct });
+  } catch (error) {
+    return res.status(400).json({ success: false, message: error.message });
+  }
+};
+const getFeaturedProducts = async (req, res) => {
+  try {
+    const bestSellingProduct = await Product.aggregate([
+      {
+        $lookup: {
+          from: 'reviews',
+          localField: 'reviews',
+          foreignField: '_id',
+          as: 'reviews',
+        },
+      },
+      {
+        $addFields: {
+          averageRating: { $avg: '$reviews.rating' },
+          image: { $arrayElemAt: ['$images', 0] },
+        },
+      },
+      {
+        $match: {
+          isFeatured: true,
+        },
+      },
+      {
+        $limit: 8,
+      },
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          status: 1,
+          isFeatured: 1,
+          slug: 1,
+          sku: 1,
+          price: 1,
+          priceSale: 1,
+          available: 1,
+          averageRating: 1,
+          priceSale: 1,
+          image: 1,
+          colors: 1,
+        },
+      },
+    ]);
+    return res.status(200).json({ success: true, data: bestSellingProduct });
+  } catch (error) {
+    return res.status(400).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   getCategories,
-  getTopProducts,
+  getTopRatedProducts,
   getBrands,
+  getBestSellerProducts,
+  getFeaturedProducts,
 };
