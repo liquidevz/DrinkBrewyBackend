@@ -48,6 +48,7 @@ const reviewRoutes = require("./routes/review");
 const wishlistRoutes = require("./routes/wishlist");
 const OrderRoutes = require("./routes/order");
 const paymentRoutes = require("./routes/payment-intents");
+const delete_fileRoutes = require("./routes/delete");
 
 app.use("/api", homeRoutes);
 app.use("/api", authRoutes);
@@ -66,6 +67,7 @@ app.use("/api", reviewRoutes);
 app.use("/api", wishlistRoutes);
 app.use("/api", OrderRoutes);
 app.use("/api", paymentRoutes);
+app.use("/api", delete_fileRoutes);
 
 // GET API
 app.get("/", (req, res) => {
