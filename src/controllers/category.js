@@ -20,9 +20,9 @@ const createCategory = async (req, res) => {
 			},
 		});
 
-		res.status(201).json({ success: true, message: "category-created" });
+		res.status(201).json({ success: true, message: "Category Created" });
 	} catch (error) {
-		res.status(400).json({ message: error.message });
+		res.status(400).json({ success: false, message: error.message });
 	}
 };
 
@@ -45,7 +45,7 @@ const getAllCategories = async (req, res) => {
 			}),
 		});
 	} catch (error) {
-		res.status(400).json({ message: error.message });
+		res.status(400).json({ success: false, message: error.message });
 	}
 };
 
@@ -56,14 +56,16 @@ const getCategoryByAdmin = async (req, res) => {
 
 		if (!category) {
 			return res.status(400).json({
-				message: "item-could-not-be-found",
+				success: false,
+				message: "Item Not Found",
 			});
 		}
 
 		res.status(201).json({ success: true, data: category });
 	} catch (error) {
 		res.status(400).json({
-			message: "category-could-not-be-found",
+			success: false,
+			message: error.message,
 		});
 	}
 };
@@ -81,14 +83,16 @@ const getCategoryBySlug = async (req, res) => {
 
 		if (!category) {
 			return res.status(400).json({
-				message: "item-could-not-be-found",
+				success: false,
+				message: "Item Not Found",
 			});
 		}
 
 		res.status(201).json({ success: true, data: category });
 	} catch (error) {
 		res.status(400).json({
-			message: "category-could-not-be-found",
+			success: false,
+			message: error.message,
 		});
 	}
 };
@@ -112,9 +116,9 @@ const updateCategoryBySlug = async (req, res) => {
 			{ new: true, runValidators: true }
 		);
 
-		res.status(201).json({ success: true, message: "category-updated" });
+		res.status(201).json({ success: true, message: "Category Updated" });
 	} catch (error) {
-		res.status(400).json({ message: error.message });
+		res.status(400).json({ success: false, message: error.message });
 	}
 };
 
@@ -127,15 +131,15 @@ const deleteCategoryBySlug = async (req, res) => {
 		if (!category) {
 			return res.status(400).json({
 				success: false,
-				message: "category-could-not-be-found",
+				message: "Item Not Found",
 			});
 		}
 
 		res
 			.status(201)
-			.json({ success: true, message: "category deleted successfully" });
+			.json({ success: true, message: "Category Deleted Successfully" });
 	} catch (error) {
-		res.status(400).json({ message: error.message });
+		res.status(400).json({ success: false, message: error.message });
 	}
 };
 const getCategories = async (req, res) => {

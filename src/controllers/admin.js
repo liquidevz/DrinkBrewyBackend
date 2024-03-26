@@ -79,14 +79,14 @@ const UpdateRoleForAdmin = async (req, res) => {
 		if (!userToUpdate) {
 			return res
 				.status(404)
-				.json({ success: false, message: "User not found." });
+				.json({ success: false, message: "User Not Found." });
 		}
 
 		// Check if the user to update is a super admin
 		if (userToUpdate.role === "super admin") {
 			return res.status(403).json({
 				success: false,
-				message: "Cannot change the role of a super admin.",
+				message: "Cannot Change The Role Of A Super Admin.",
 			});
 		}
 
@@ -102,7 +102,7 @@ const UpdateRoleForAdmin = async (req, res) => {
 
 		return res.status(200).json({
 			success: true,
-			message: `${updatedUser.firstName} is now ${newRole}.`,
+			message: `${updatedUser.firstName} Is Now ${newRole}.`,
 		});
 	} catch (error) {
 		return res.status(500).json({ success: false, message: error.message });
