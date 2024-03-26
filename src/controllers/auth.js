@@ -18,7 +18,7 @@ const registerUser = async (req, res) => {
 			return res.status(400).json({
 				UserCount,
 				success: false,
-				message: "User with this email already exists",
+				message: "User With This Email Already Exists",
 			});
 		}
 
@@ -81,7 +81,7 @@ const registerUser = async (req, res) => {
 		await transporter.sendMail(mailOptions);
 		res.status(201).json({
 			success: true,
-			message: "Created user successfully",
+			message: "Created User Successfully",
 			otp,
 			token,
 			user,
@@ -253,14 +253,13 @@ const forgetPassword = async (req, res) => {
 
 		return res.status(200).json({
 			success: true,
-			message: "Forgot password email sent successfully.",
+			message: "Forgot Password Email Sent Successfully.",
 			token,
 		});
 	} catch (error) {
-		console.error("Error sending email:", error);
 		return res
 			.status(500)
-			.json({ success: false, message: "Error sending email." });
+			.json({ success: false, message: "Error Sending Email." });
 	}
 };
 
@@ -275,7 +274,7 @@ const resetPassword = async (req, res) => {
 		} catch (err) {
 			return res.status(400).json({
 				success: false,
-				message: "Invalid or expired token. Please request a new one.",
+				message: "Invalid Or Expired Token. Please Request A New One.",
 			});
 		}
 
@@ -292,7 +291,7 @@ const resetPassword = async (req, res) => {
 			return res.status(400).json({
 				success: false,
 				message:
-					"Invalid data. Both newPassword and user.password are required.",
+					"Invalid Data. Both NewPassword And User Password Are Required.",
 			});
 		}
 
@@ -301,7 +300,7 @@ const resetPassword = async (req, res) => {
 		if (isSamePassword) {
 			return res.status(400).json({
 				success: false,
-				message: "New password must be different from the old password.",
+				message: "New Password Must Be Different From The Old Password.",
 			});
 		}
 		// Update the user's password
@@ -340,7 +339,7 @@ const verifyOtp = async (req, res) => {
 		if (user.isVerified) {
 			return res.status(400).json({
 				success: false,
-				message: "OTP has already been verified",
+				message: "OTP Has Already Been Verified",
 			});
 		}
 
@@ -379,7 +378,7 @@ const resendOtp = async (req, res) => {
 		if (user.isVerified) {
 			return res.status(400).json({
 				success: false,
-				message: "OTP has already been verified",
+				message: "OTP Has Already Been Verified",
 			});
 		}
 		// Generate new OTP
