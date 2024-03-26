@@ -1,5 +1,11 @@
 // Import the cloudinary module
-const cloudinary = require('./cloudinary');
+const cloudinary = require('cloudinary').v2;
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_PUBLISHABLE_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET_KEY,
+  secure: true,
+});
 
 const uploadOnCloudinary = (file) => {
   return cloudinary.uploader.unsigned_upload(file);
@@ -28,7 +34,7 @@ exports.multiFileUploader = async (images) => {
   const uploaded = imageUrlList.map((v) => {
     return {
       _id: v.public_id,
-      url: v.secure_url
+      url: v.secure_url,
     };
   });
   return uploaded;
@@ -38,7 +44,7 @@ exports.singleFileUploader = async (image) => {
   const result = await uploadOnCloudinary(image);
   const uploaded = {
     _id: result.public_id,
-    url: result.secure_url
+    url: result.secure_url,
   };
   return uploaded;
 };

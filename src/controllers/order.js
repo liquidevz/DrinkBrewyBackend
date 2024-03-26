@@ -43,8 +43,8 @@ const createOrder = async (req, res) => {
       paymentId,
       couponCode,
       totalItems,
+      shipping,
     } = await req.body;
-    const shipping = parseInt(process.env.SHIPPING_FEE || 0);
 
     if (!items || !items.length) {
       return res
