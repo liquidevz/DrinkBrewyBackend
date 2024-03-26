@@ -1,9 +1,7 @@
+const Products = require('../models/Product');
 
-const Products =require ('../models/Product');
-
-const createCart=async (request,response)=> {
+const getCart = async (request, response) => {
   try {
-
     const req = await request.body;
     const cartItems = [];
 
@@ -14,42 +12,44 @@ const createCart=async (request,response)=> {
         'brand',
         'slug',
         'available',
-        'images',
         'price',
-        'priceSale'
+        'priceSale',
       ]);
 
       if (!product) {
-        // Handle product not found
-        return response.status(404).json({ success: false, message: 'Products Not Found' });
+        return response
+          .status(404)
+          .json({ success: false, message: 'Products Not Found' });
       }
       const { quantity, color, size, sku } = item;
       if (product.available < quantity) {
-        return response.status(400).json({ success: false, message: 'No Products in Stock' });
+        return response
+          .status(400)
+          .json({ success: false, message: 'No Products in Stock' });
       }
 
       const subtotal = (product.priceSale || product.price) * quantity;
-      // const { _id, ...others } = product.toObject();
       const { ...others } = product.toObject();
       cartItems.push({
         ...others,
         pid: item.pid,
         quantity,
         size,
+        image: item.image,
         color,
         subtotal: subtotal.toFixed(2),
-        sku: sku
+        sku: sku,
       });
     }
 
-    return response.status(200).json(
-      {
-        success: true,
-        data: cartItems
-      }
-    );
+    return response.status(200).json({
+      success: true,
+      data: cartItems,
+    });
   } catch (error) {
-    return response.status(400).json({ success: false, message: error.message });
+    return response
+      .status(400)
+      .json({ success: false, message: error.message });
   }
-}
-module.exports={createCart}
+};
+module.exports = { getCart };
