@@ -35,6 +35,7 @@ function readHTMLTemplate() {
 }
 
 const createOrder = async (req, res) => {
+
   try {
     const {
       items,
@@ -135,17 +136,17 @@ const createOrder = async (req, res) => {
       `${user.firstName} ${user.lastName}`
     );
 
-    let itemsHtml = '';
-    updatedItems.forEach((item) => {
-      itemsHtml += `
-        <tr>
-          <td style="border-radius: 8px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); overflow: hidden;">
+ let itemsHtml = "";
+		updatedItems.forEach(item => {
+			itemsHtml += `
+        <tr style='border-bottom: 1px solid #e4e4e4;'>
+          <td style="border-radius: 8px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); overflow: hidden; border-spacing: 0; border: 0">
             <img src="${item.imageUrl}" alt="${item.name}" style="width: 62px; height: 62px; object-fit: cover; border-radius: 8px;">
           </td>
-          <td style="border-bottom: 1px solid #e4e4e4; padding: 10px;">${item.name}</td>         
-          <td style="border-bottom: 1px solid #e4e4e4; padding: 10px">${item.sku}</td>
-          <td style="border-bottom: 1px solid #e4e4e4; padding: 10px">${item.quantity}</td>
-          <td style="border-bottom: 1px solid #e4e4e4; padding: 10px">${item.priceSale}</td>
+          <td style=" padding: 10px; border-spacing: 0; border: 0">${item.name}</td>         
+          <td style=" padding: 10px; border-spacing: 0; border: 0">${item.sku}</td>
+          <td style=" padding: 10px; border-spacing: 0; border: 0">${item.quantity}</td>
+          <td style=" padding: 10px; border-spacing: 0; border: 0">${item.priceSale}</td>
         </tr>
       `;
     });
