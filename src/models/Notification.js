@@ -30,7 +30,7 @@ const NotificationsSchema = new mongoose.Schema(
     paymentMethod: {
       type: String,
       required: [true, 'Payment Method is required.'],
-      enum: ['stripe', 'COD'],
+      enum: ['Stripe', 'PayPal', 'COD'],
     },
   },
   {
