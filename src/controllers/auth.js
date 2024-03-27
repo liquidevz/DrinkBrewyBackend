@@ -50,7 +50,7 @@ const registerUser = async (req, res) => {
 		const htmlFilePath = path.join(
 			process.cwd(),
 			"src/email-templates",
-			"otp-email.html"
+			"otp.html"
 		);
 
 		// Read HTML file content
@@ -257,9 +257,7 @@ const forgetPassword = async (req, res) => {
 			token,
 		});
 	} catch (error) {
-		return res
-			.status(500)
-			.json({ success: false, message: "Error Sending Email." });
+		return res.status(500).json({ success: false, message: error.message });
 	}
 };
 
@@ -397,7 +395,7 @@ const resendOtp = async (req, res) => {
 		const htmlFilePath = path.join(
 			process.cwd(),
 			"src/email-templates",
-			"otp-email.html"
+			"otp.html"
 		);
 
 		// Read HTML file content
