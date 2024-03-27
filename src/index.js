@@ -16,13 +16,10 @@ app.use(bodyParser.json());
 
 // Connect to MongoDB
 mongoose
-	.connect(
-		"mongodb+srv://vercel-admin-user:uKWAWdCpSoBDdApC@cluster0.whfrnxl.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
-		{
-			useNewUrlParser: true,
-			useUnifiedTopology: true,
-		}
-	)
+	.connect(process.env.MONGODB_URI, {
+		useNewUrlParser: true,
+		useUnifiedTopology: true,
+	})
 	.then(() => {
 		console.log("Connected to MongoDB");
 	})
