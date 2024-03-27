@@ -1,5 +1,5 @@
 const { singleFileDelete } = require('../config/uploader');
-const delete_file = async (req, res) => {
+const deleteFile = async (req, res) => {
   try {
     const id = req.params.id;
     const result = await singleFileDelete(id);
