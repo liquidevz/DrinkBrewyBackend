@@ -313,7 +313,16 @@ const getOneProductBySlug = async (req, res) => {
 		if (!product) {
 			notFound();
 		}
-
+		const related = await Product.find(
+			{
+				category: product.category,
+				_id: { $ne: product._id },
+			},
+			null,
+			{
+				limit: 12,
+			}
+		);
 		const getProductRatingAndReviews = () => {
 			return Product.aggregate([
 				{
@@ -344,6 +353,7 @@ const getOneProductBySlug = async (req, res) => {
 			data: product,
 			totalRating: reviewReport[0]?.rating,
 			totalReviews: reviewReport[0]?.totalReviews,
+			relatedProducts: related,
 			brand: brand,
 			category: category,
 		});
