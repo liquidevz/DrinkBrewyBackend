@@ -26,5 +26,6 @@ router.get("/filters/:category", product.getFiltersByCategory);
 router.get("/filters/:category/:subcategory", product.getFiltersBySubCategory);
 router.get("/products/:slug", product.getOneProductBySlug);
 router.get("/products-slugs", product.getAllProductSlug);
+router.get("/related-products/:cid/:pid", product.relatedProducts);
 
 module.exports = router;
