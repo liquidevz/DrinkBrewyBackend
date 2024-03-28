@@ -313,16 +313,6 @@ const getOneProductBySlug = async (req, res) => {
 		if (!product) {
 			notFound();
 		}
-		const related = await Product.find(
-			{
-				category: product.category,
-				_id: { $ne: product._id },
-			},
-			null,
-			{
-				limit: 12,
-			}
-		);
 		const getProductRatingAndReviews = () => {
 			return Product.aggregate([
 				{
@@ -353,7 +343,6 @@ const getOneProductBySlug = async (req, res) => {
 			data: product,
 			totalRating: reviewReport[0]?.rating,
 			totalReviews: reviewReport[0]?.totalReviews,
-			relatedProducts: related,
 			brand: brand,
 			category: category,
 		});
@@ -540,6 +529,44 @@ const getAllProductSlug = async (req, res) => {
 	}
 };
 
+const relatedProducts = async (req, res) => {
+	try {
+		const cid = req.params.cid;
+		const pid = req.params.pid;
+
+		// Fetch the product based on category and product IDs
+		const product = await Product.findById({
+			_id: pid,
+			category: cid,
+		});
+		const related = await Product.find(
+			{
+				category: product.category,
+				_id: { $ne: product._id },
+			},
+			null,
+			{
+				limit: 12,
+			}
+		).select([
+			"images",
+			"name",
+			"slug",
+			"brand",
+			"colors",
+			"sizes",
+			"discount",
+			"likes",
+			"rating",
+			"priceSale",
+			"price",
+		]);
+
+		res.status(200).json({ success: true, relatedProducts: related });
+	} catch (error) {
+		res.status(500).json({ success: false, message: error.message });
+	}
+};
 module.exports = {
 	getProducts,
 	getFilters,
@@ -551,4 +578,5 @@ module.exports = {
 	getFiltersByCategory,
 	getAllProductSlug,
 	getFiltersBySubCategory,
+	relatedProducts,
 };
