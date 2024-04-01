@@ -48,6 +48,7 @@ const UserSchema = new mongoose.Schema(
         ref: 'Order',
       },
     ],
+    shop: { type: mongoose.Types.ObjectId, ref: 'SHop' },
     recentProducts: [
       {
         type: mongoose.Types.ObjectId,
@@ -94,7 +95,7 @@ const UserSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['super admin', 'admin', 'user'],
+      enum: ['super admin', 'admin', 'user', 'vendor'],
       required: true,
     },
   },
@@ -104,7 +105,7 @@ const UserSchema = new mongoose.Schema(
 );
 
 // Hash the password before saving
-UserSchema.pre('save', async function (next) {
+UserSchema.pre('save', async function(next) {
   try {
     if (!this.isModified('password')) {
       return next();

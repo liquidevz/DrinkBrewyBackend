@@ -74,6 +74,16 @@ const productSchema = new mongoose.Schema(
         ref: 'Review',
       },
     ],
+    vender: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    shop: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Shop',
+      required: true,
+    },
     images: [
       {
         url: {
@@ -86,8 +96,8 @@ const productSchema = new mongoose.Schema(
         },
         blurDataURL: {
           type: String,
-          required: [true, 'image-blur-data-url-required-error']
-        }
+          required: [true, 'image-blur-data-url-required-error'],
+        },
       },
     ],
 
