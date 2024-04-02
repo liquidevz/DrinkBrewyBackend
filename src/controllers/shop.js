@@ -1,9 +1,13 @@
 const Shop = require('../models/Shop');
 const getBlurDataURL = require('../config/getBlurDataURL');
 const { singleFileDelete } = require('../config/uploader');
+const {getVendor} = require("../config/getUser");
 
-const getShops = async (req, res) => {
+
+const getShopsByAdmin = async (req, res) => {
   try {
+    const vendor = await getVendor(req,res)
+
     const { limit = 10, page = 1 } = req.query;
 
     const skip = (parseInt(page) - 1) * parseInt(limit);
@@ -26,13 +30,15 @@ const getShops = async (req, res) => {
   }
 };
 
-const createShop = async (req, res) => {
+const createShopByVendor = async (req, res) => {
   try {
+        const vendor = await getVendor(req,res)
     const { logo, cover, ...others } = req.body;
     const logoBlurDataURL = await getBlurDataURL(logo.url);
     const coverBlurDataURL = await getBlurDataURL(cover.url);
-
+    console.log(vendor)
     const shop = await Shop.create({
+      vendor:vendor._id.toString(),
       ...others,
       logo: {
         ...logo,
@@ -44,7 +50,7 @@ const createShop = async (req, res) => {
       },
       status: 'pending',
     });
-
+ 
     return res.status(200).json({
       success: true,
       data:shop,
@@ -57,7 +63,8 @@ const createShop = async (req, res) => {
 const getShopById = async (req, res) => {
   try {
     const { sid } = req.params;
-    const shop = await Shop.findById(sid);
+    const vendor = await getVendor(req,res)
+    const shop = await Shop.find({ _id: sid, vendor: vendor._id });
     if (!shop) {
       return res.status(404).json({ message: 'Shop Not Found' });
     }
@@ -72,11 +79,12 @@ const getShopById = async (req, res) => {
 const updateShopById = async (req, res) => {
   try {
     const { sid } = req.params;
+     const vendor = await getVendor(req,res)
     const { logo, cover, ...others } = req.body;
     const logoBlurDataURL = await getBlurDataURL(logo.url);
     const coverBlurDataURL = await getBlurDataURL(cover.url);
-    const updateShop = await Shop.findByIdAndUpdate(
-       sid ,
+    const updateShop = await Shop.findOneAndUpdate(
+       {_id:sid,vendor:vendor._id} ,
       {
         ...others,
         logo: {
@@ -106,12 +114,13 @@ const updateShopById = async (req, res) => {
 const deleteShopById = async (req, res) => {
   try {
     const { sid } = req.params;
-    const shop = await Shop.findById(sid);
+     const vendor = await getVendor(req,res)
+    const shop = await Shop.findOne({_id:sid,vendor:vendor._id});
     if (!shop) {
       return res.status(404).json({ message: 'Shop Not Found' });
     }
-    const dataaa = await singleFileDelete(shop?.logo?._id, shop?.cover?._id);
-    await Shop.deleteOne({ _id: sid }); // Corrected to pass an object to deleteOne method
+    // const dataaa = await singleFileDelete(shop?.logo?._id,shop?.cover?._id);
+    await Shop.deleteOne({ _id: sid,vendor:vendor._id }); // Corrected to pass an object to deleteOne method
     return res.status(200).json({
       success: true,
       message: "Shop Deleted Successfully" // Corrected message typo
@@ -133,9 +142,10 @@ const getAllShops = async (req, res) => {
   }
 };
 
+
 module.exports = {
-  getShops,
-  createShop,
+  getShopsByAdmin,
+  createShopByVendor,
   getShopById,
   updateShopById,
   deleteShopById,

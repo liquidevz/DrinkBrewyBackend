@@ -74,7 +74,7 @@ const productSchema = new mongoose.Schema(
         ref: 'Review',
       },
     ],
-    vender: {
+    vendor: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,

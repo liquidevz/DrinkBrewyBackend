@@ -4,8 +4,8 @@ const shop = require('../controllers/shop');
 // Import verifyToken function
 const verifyToken = require('../config/jwt');
 //Admin routes
-router.get('/admin/vendor/shops',verifyToken, shop.getShops);
-router.post('/admin/vendor/shops', verifyToken, shop.createShop);
+router.get('/admin/vendor/shops',verifyToken, shop.getShopsByAdmin);
+router.post('/admin/vendor/shops', verifyToken, shop.createShopByVendor);
 router.get('/admin/vendor/shops/:sid', verifyToken, shop.getShopById);
 router.put('/admin/vendor/shops/:sid', verifyToken, shop.updateShopById);
 router.delete('/admin/vendor/shops/:sid', verifyToken, shop.deleteShopById);

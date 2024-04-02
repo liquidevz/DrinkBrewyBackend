@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const ShopSchema = new mongoose.Schema(
   {
-    vender: {
+    vendor: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
