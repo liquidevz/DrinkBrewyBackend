@@ -64,8 +64,8 @@ exports.getVendor = async (req, res) => {
 				.status(404)
 				.json({ success: false, message: "User Not Found." });
 		}
-		if (user.role==="user") {
-			return  {error: "Access Denied."} ;
+	if (!user.role.includes("vendor")) {
+			return { error: "Access Denied.", status: 401 };
 		}
 	return user
 	} catch (error) {
