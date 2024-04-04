@@ -1,11 +1,13 @@
 // controllers/newsController.js
 const Brand = require('../models/Brand');
 const Product = require('../models/Product');
+const Shop = require('../models/Shop');
 const Category = require('../models/Category');
 const SubCategory = require('../models/SubCategory');
 const _ = require('lodash');
 const { multiFilesDelete } = require('../config/uploader');
 const blurDataUrl = require('../config/getBlurDataURL');
+const {getAdmin,getVendor} =require('../config/getUser')
 const getProducts = async (req, res) => {
   try {
     const query = req.query; // Extract query params from request
@@ -23,6 +25,7 @@ const getProducts = async (req, res) => {
     delete newQuery.category;
     delete newQuery.subCategory;
     delete newQuery.gender;
+    delete newQuery.shop;
     for (const [key, value] of Object.entries(newQuery)) {
       newQuery = { ...newQuery, [key]: value.split('_') };
     }
@@ -31,6 +34,9 @@ const getProducts = async (req, res) => {
     }).select('slug');
     const category = await Category.findOne({
       slug: query.category,
+    }).select('slug');
+    const shop = await Shop.findOne({
+      slug: query.shop,
     }).select('slug');
 
     const subCategory = await SubCategory.findOne({
@@ -41,6 +47,7 @@ const getProducts = async (req, res) => {
     const totalProducts = await Product.countDocuments({
       ...newQuery,
       ...(Boolean(query.brand) && { brand: brand._id }),
+      ...(Boolean(query.shop) && { brand: shop._id }),
       ...(Boolean(query.category) && { category: category._id }),
       ...(Boolean(query.subCategory) && { subCategory: subCategory._id }),
       ...(query.sizes && { sizes: { $in: query.sizes.split('_') } }),
@@ -85,6 +92,9 @@ const getProducts = async (req, res) => {
 
           ...(Boolean(query.brand) && {
             brand: brand._id,
+          }),
+           ...(Boolean(query.shop) && {
+            shop: shop._id,
           }),
           ...(query.isFeatured && {
             isFeatured: Boolean(query.isFeatured),
@@ -164,6 +174,9 @@ const getFilters = async (req, res) => {
     const totalProducts = await Product.find({
       status: { $ne: 'disabled' },
     }).select(['colors', 'sizes', 'gender', 'price']);
+    const Shops = await Shop.find({
+      status: { $ne: 'disabled' },
+    }).select(['title']);
     const brands = await Brand.find({
       status: { $ne: 'disabled' },
     }).select(['name', 'slug']);
@@ -183,6 +196,8 @@ const getFilters = async (req, res) => {
       prices: [min, max],
       genders: totalGender.filter(onlyUnique),
       brands: brands,
+      Shops: Shops,
+
     };
     res.status(201).json({ success: true, data: response });
   } catch (error) {
@@ -193,12 +208,13 @@ const getFilters = async (req, res) => {
     });
   }
 };
-const GetAllProductsByAdmin = async (request, response) => {
+const getProductsByAdmin = async (request, response) => {
   try {
     const {
       page: pageQuery,
       limit: limitQuery,
       search: searchQuery,
+      shopId,
     } = request.query;
 
     const limit = parseInt(limitQuery) || 10;
@@ -207,14 +223,25 @@ const GetAllProductsByAdmin = async (request, response) => {
     // Calculate skip correctly
     const skip = limit * (page - 1);
 
+    let matchQuery = {};
+
+    if (shopId) {
+      const shop = await Shop.findOne({
+        _id: shopId,
+      }).select(['slug', '_id']);
+
+      matchQuery.shop = shop._id;
+    }
+
     const totalProducts = await Product.countDocuments({
       name: { $regex: searchQuery || '', $options: 'i' },
+      ...matchQuery,
     });
 
     const products = await Product.aggregate([
       {
-        $match: {
-          name: { $regex: searchQuery || '', $options: 'i' },
+       $match: {
+          ...matchQuery,
         },
       },
       {
@@ -270,8 +297,10 @@ const GetAllProductsByAdmin = async (request, response) => {
     response.status(400).json({ success: false, message: error.message });
   }
 };
-const createProduct = async (req, res) => {
+const createProductByAdmin = async (req, res) => {
   try {
+    const admin = await getAdmin(req, res)
+    
     const { images, ...body } = req.body;
 
     const updatedImages = await Promise.all(
@@ -281,6 +310,7 @@ const createProduct = async (req, res) => {
       })
     );
     const data = await Product.create({
+      vendor:admin._id,
       ...body,
       images: updatedImages,
       likes: 0,
@@ -296,7 +326,7 @@ const createProduct = async (req, res) => {
   }
 };
 
-const getOneProductBySlug = async (req, res) => {
+const getOneProductByAdmin = async (req, res) => {
   try {
     const product = await Product.findOne({ slug: req.params.slug });
     const category = await Category.findById(product.category).select([
@@ -345,8 +375,9 @@ const getOneProductBySlug = async (req, res) => {
     return res.status(400).json({ success: false, error: error.message });
   }
 };
-const updateProductBySlug = async (req, res) => {
+const updateProductByAdmin = async (req, res) => {
   try {
+    const vendor = await getVendor(req, res);
     const { slug } = req.params;
     const { images, ...body } = req.body;
 
@@ -358,7 +389,7 @@ const updateProductBySlug = async (req, res) => {
     );
 
     const updated = await Product.findOneAndUpdate(
-      { slug: slug },
+      { slug: slug,vendor:vendor._id },
       {
         ...body,
         images: updatedImages,
@@ -375,7 +406,7 @@ const updateProductBySlug = async (req, res) => {
     return res.status(400).json({ success: false, error: error.message });
   }
 };
-async function deletedProductBySlug(req, res) {
+async function deletedProductByAdmin(req, res) {
   try {
     const slug = req.params.slug;
     const product = await Product.findOne({ slug: slug });
@@ -575,16 +606,29 @@ const relatedProducts = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+const getOneProductBySlug = async (req, res) => {
+  try {
+    const slug = req.params.slug;
+    const products = await Product.findOne({ slug:slug });
+    res.status(200).json({
+      success: true,
+      message:products
+    })
+  }catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
 module.exports = {
   getProducts,
   getFilters,
-  GetAllProductsByAdmin,
-  createProduct,
-  getOneProductBySlug,
-  updateProductBySlug,
-  deletedProductBySlug,
+  getProductsByAdmin,
+  createProductByAdmin,
+  getOneProductByAdmin,
+  updateProductByAdmin,
+  deletedProductByAdmin,
   getFiltersByCategory,
   getAllProductSlug,
   getFiltersBySubCategory,
   relatedProducts,
+  getOneProductBySlug,
 };

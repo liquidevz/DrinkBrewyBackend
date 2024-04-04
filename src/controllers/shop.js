@@ -205,14 +205,14 @@ const getOneShopByVendor = async (req, res) => {
 const updateOneShopByVendor = async (req, res) => {
   try {
     const { sid } = req.params;
-     const admin = await getAdmin(req,res)
+     const vendor = await getVendor(req,res)
     const { logo, cover, ...others } = req.body;
     const logoBlurDataURL = await getBlurDataURL(logo.url);
     const coverBlurDataURL = await getBlurDataURL(cover.url);
     const updateShop = await Shop.findOneAndUpdate(
       {
         _id: sid,
-        vendor: admin._id.toString()
+        vendor: vendor._id.toString()
       },
       {
         ...others,
