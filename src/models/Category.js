@@ -13,8 +13,8 @@ const CategorySchema = new mongoose.Schema(
       },
       blurDataURL: {
         type: String,
-        required: [true, 'image-blur-data-url-required-error']
-      }
+        required: [true, 'image-blur-data-url-required-error'],
+      },
     },
     name: {
       type: String,
