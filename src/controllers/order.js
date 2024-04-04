@@ -202,7 +202,7 @@ const getOrderById = async (req, res) => {
     return res.status(400).json({ success: false, message: error.message });
   }
 };
-const getOrderByAdmin = async (req, res) => {
+const getOrdersByAdmin = async (req, res) => {
   try {
     const { limit = 10, page = 1, search = '' } = req.query;
 
@@ -326,6 +326,7 @@ const deleteOrderByAdmin = async (req, res) => {
     return res.status(400).json({ success: false, message: error.message });
   }
 };
+// Vendor apis
 const getOrdersByVendor = async (req, res) => {
   try {
     const vendor = await getVendor(req, res);
@@ -378,10 +379,11 @@ const getOrdersByVendor = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
 module.exports = {
   createOrder,
   getOrderById,
-  getOrderByAdmin,
+  getOrdersByAdmin,
   getOneOrderByAdmin,
   updateOrderByAdmin,
   deleteOrderByAdmin,
