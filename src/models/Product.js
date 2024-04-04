@@ -74,11 +74,7 @@ const productSchema = new mongoose.Schema(
         ref: 'Review',
       },
     ],
-    vendor: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
+
     shop: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Shop',

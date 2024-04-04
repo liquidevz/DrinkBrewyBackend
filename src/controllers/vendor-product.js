@@ -74,6 +74,7 @@ const getProductsByVendor = async (req, res) => {
           averageRating: 1,
           vendor: 1,
           shop: 1,
+          available: 1,
           createdAt: 1,
         },
       },
@@ -108,13 +109,7 @@ const createProductByVendor = async (req, res) => {
     if (!shop) {
       res.status(404).json({ success: false, message: 'Shop not found' });
     }
-    console.log({
-      vendor: vendor._id.toString(),
-      shop: shop._id,
-      ...body,
-      images: updatedImages,
-      likes: 0,
-    });
+
     const data = await Product.create({
       shop: shop._id,
       ...body,
@@ -188,6 +183,12 @@ const getOneProductVendor = async (req, res) => {
 const updateProductByVendor = async (req, res) => {
   try {
     const vendor = await getVendor(req, res);
+    const shop = await Shop.findOne({
+      vendor: vendor._id.toString(),
+    });
+    if (!shop) {
+      res.status(404).json({ success: false, message: 'Shop not found' });
+    }
     const { slug } = req.params;
     const { images, ...body } = req.body;
 
@@ -199,7 +200,7 @@ const updateProductByVendor = async (req, res) => {
     );
 
     const updated = await Product.findOneAndUpdate(
-      { slug: slug, vendor: vendor._id },
+      { slug: slug, shop: shop._id },
       {
         ...body,
         images: updatedImages,
@@ -219,8 +220,14 @@ const updateProductByVendor = async (req, res) => {
 const deletedProductByVendor = async (req, res) => {
   try {
     const vendor = await getVendor(req, res);
+    const shop = await Shop.findOne({
+      vendor: vendor._id.toString(),
+    });
+    if (!shop) {
+      res.status(404).json({ success: false, message: 'Shop not found' });
+    }
     const slug = req.params.slug;
-    const product = await Product.findOne({ slug: slug, vendor: vendor._id });
+    const product = await Product.findOne({ slug: slug, shop: shop._id });
     if (!product) {
       return res.status(404).json({
         success: false,
