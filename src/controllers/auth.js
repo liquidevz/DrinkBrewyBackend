@@ -146,23 +146,22 @@ const loginUser = async (req, res) => {
       {
         $addFields: {
           averageRating: { $avg: '$reviews.rating' },
+          image: { $arrayElemAt: ['$images', 0] },
         },
       },
       {
         $project: {
-          _id: 1,
+          image: { url: '$image.url', blurDataURL: '$image.blurDataURL' },
           name: 1,
-          brand: 1,
-          description: 1,
           slug: 1,
           colors: 1,
-          sku: 1,
-          images: 1,
-          gender: 1,
-          available: 1,
+          discount: 1,
+          likes: 1,
           priceSale: 1,
           price: 1,
           averageRating: 1,
+          vendor: 1,
+          shop: 1,
         },
       },
     ]);

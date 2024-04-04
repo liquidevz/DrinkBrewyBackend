@@ -120,6 +120,8 @@ const getProducts = async (req, res) => {
           priceSale: 1,
           price: 1,
           averageRating: 1,
+          vendor: 1,
+          shop: 1,
         },
       },
       {
@@ -242,23 +244,17 @@ const GetAllProductsByAdmin = async (request, response) => {
 
       {
         $project: {
-          _id: 1,
-          status: 1,
-          createdAt: 1,
+          image: { url: '$image.url', blurDataURL: '$image.blurDataURL' },
           name: 1,
           slug: 1,
           colors: 1,
-
-          images: 1,
+          discount: 1,
+          likes: 1,
           priceSale: 1,
-          available: 1,
-
-          // category: {
-          //   _id: 1,
-          //   name: 1, // Include the fields you need from the category
-          // },
-          // reviews: 1,
+          price: 1,
           averageRating: 1,
+          vendor: 1,
+          shop: 1,
         },
       },
     ]);
@@ -559,19 +555,17 @@ const relatedProducts = async (req, res) => {
       },
       {
         $project: {
-          _id: 1,
+          image: { url: '$image.url', blurDataURL: '$image.blurDataURL' },
           name: 1,
-          status: 1,
-          isFeatured: 1,
           slug: 1,
-          sku: 1,
-          price: 1,
-          priceSale: 1,
-          available: 1,
-          averageRating: 1,
-          priceSale: 1,
-          image: 1,
           colors: 1,
+          discount: 1,
+          likes: 1,
+          priceSale: 1,
+          price: 1,
+          averageRating: 1,
+          vendor: 1,
+          shop: 1,
         },
       },
     ]);
