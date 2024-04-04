@@ -1,4 +1,3 @@
-
 const Product = require('../models/Product');
 const Shop = require('../models/Shop');
 const Category = require('../models/Category');
@@ -7,18 +6,17 @@ const Brand = require('../models/Brand');
 const _ = require('lodash');
 const { multiFilesDelete } = require('../config/uploader');
 const blurDataUrl = require('../config/getBlurDataURL');
-const { getVendor } = require('../config/getUser')
+const { getVendor } = require('../config/getUser');
 
 const getProductsByVendor = async (req, res) => {
-    try {
-      const vendor =await getVendor(req,res)
+  try {
+    const vendor = await getVendor(req, res);
     const {
       page: pageQuery,
       limit: limitQuery,
       search: searchQuery,
-    //   vendorId,
-      } = req.query;
-      
+      //   vendorId,
+    } = req.query;
 
     const limit = parseInt(limitQuery) || 10;
     const page = parseInt(pageQuery) || 1;
@@ -27,16 +25,16 @@ const getProductsByVendor = async (req, res) => {
     const skip = limit * (page - 1);
 
     const totalProducts = await Product.countDocuments({
-        name: { $regex: searchQuery || '', $options: 'i' },
+      name: { $regex: searchQuery || '', $options: 'i' },
       ...(Boolean(vendor) && { vendor: vendor._id }),
     });
 
     const products = await Product.aggregate([
-        {
-            $match: {
-               ...(Boolean(vendor) && { vendor: vendor._id }),
-            },
+      {
+        $match: {
+          ...(Boolean(vendor) && { vendor: vendor._id }),
         },
+      },
       {
         $sort: {
           createdAt: -1,
@@ -59,21 +57,24 @@ const getProductsByVendor = async (req, res) => {
       {
         $addFields: {
           averageRating: { $avg: '$reviews.rating' },
+          image: { $arrayElemAt: ['$images', 0] },
         },
       },
 
       {
         $project: {
-          _id: 1,
-          status: 1,
-          createdAt: 1,
+          image: { url: '$image.url', blurDataURL: '$image.blurDataURL' },
           name: 1,
           slug: 1,
           colors: 1,
-          images: 1,
+          discount: 1,
+          likes: 1,
           priceSale: 1,
-          available: 1,
+          price: 1,
           averageRating: 1,
+          vendor: 1,
+          shop: 1,
+          createdAt: 1,
         },
       },
     ]);
@@ -91,8 +92,8 @@ const getProductsByVendor = async (req, res) => {
 };
 const createProductByVendor = async (req, res) => {
   try {
-    const vendor = await getVendor(req, res)
-    
+    const vendor = await getVendor(req, res);
+
     const { images, ...body } = req.body;
 
     const updatedImages = await Promise.all(
@@ -101,8 +102,21 @@ const createProductByVendor = async (req, res) => {
         return { ...image, blurDataURL };
       })
     );
+    const shop = await Shop.findOne({
+      vendor: vendor._id.toString(),
+    });
+    if (!shop) {
+      res.status(404).json({ success: false, message: 'Shop not found' });
+    }
+    console.log({
+      vendor: vendor._id.toString(),
+      shop: shop._id,
+      ...body,
+      images: updatedImages,
+      likes: 0,
+    });
     const data = await Product.create({
-      vendor:vendor._id,
+      shop: shop._id,
       ...body,
       images: updatedImages,
       likes: 0,
@@ -119,9 +133,12 @@ const createProductByVendor = async (req, res) => {
 };
 
 const getOneProductVendor = async (req, res) => {
-    try {
-    const vendor =await getAdmin(req,res)
-    const product = await Product.findOne({ slug: req.params.slug,vendor:vendor._id });
+  try {
+    const vendor = await getVendor(req, res);
+    const product = await Product.findOne({
+      slug: req.params.slug,
+      vendor: vendor._id.toString(),
+    });
     const category = await Category.findById(product.category).select([
       'name',
       'slug',
@@ -182,7 +199,7 @@ const updateProductByVendor = async (req, res) => {
     );
 
     const updated = await Product.findOneAndUpdate(
-      { slug: slug,vendor:vendor._id },
+      { slug: slug, vendor: vendor._id },
       {
         ...body,
         images: updatedImages,
@@ -199,11 +216,11 @@ const updateProductByVendor = async (req, res) => {
     return res.status(400).json({ success: false, error: error.message });
   }
 };
-const deletedProductByVendor = async (req, res)=> {
+const deletedProductByVendor = async (req, res) => {
   try {
     const vendor = await getVendor(req, res);
     const slug = req.params.slug;
-    const product = await Product.findOne({ slug: slug,vendor:vendor._id });
+    const product = await Product.findOne({ slug: slug, vendor: vendor._id });
     if (!product) {
       return res.status(404).json({
         success: false,
@@ -231,12 +248,12 @@ const deletedProductByVendor = async (req, res)=> {
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });
   }
-}
+};
 
 module.exports = {
-    createProductByVendor,
-    getProductsByVendor,
-    getOneProductVendor,
-    updateProductByVendor,
-    deletedProductByVendor,
-}
+  createProductByVendor,
+  getProductsByVendor,
+  getOneProductVendor,
+  updateProductByVendor,
+  deletedProductByVendor,
+};

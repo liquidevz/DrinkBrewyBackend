@@ -7,7 +7,7 @@ const SubCategory = require('../models/SubCategory');
 const _ = require('lodash');
 const { multiFilesDelete } = require('../config/uploader');
 const blurDataUrl = require('../config/getBlurDataURL');
-const {getAdmin,getVendor} =require('../config/getUser')
+const { getAdmin, getVendor } = require('../config/getUser');
 const getProducts = async (req, res) => {
   try {
     const query = req.query; // Extract query params from request
@@ -93,7 +93,7 @@ const getProducts = async (req, res) => {
           ...(Boolean(query.brand) && {
             brand: brand._id,
           }),
-           ...(Boolean(query.shop) && {
+          ...(Boolean(query.shop) && {
             shop: shop._id,
           }),
           ...(query.isFeatured && {
@@ -132,6 +132,7 @@ const getProducts = async (req, res) => {
           averageRating: 1,
           vendor: 1,
           shop: 1,
+          createdAt: 1,
         },
       },
       {
@@ -197,7 +198,6 @@ const getFilters = async (req, res) => {
       genders: totalGender.filter(onlyUnique),
       brands: brands,
       Shops: Shops,
-
     };
     res.status(201).json({ success: true, data: response });
   } catch (error) {
@@ -240,7 +240,7 @@ const getProductsByAdmin = async (request, response) => {
 
     const products = await Product.aggregate([
       {
-       $match: {
+        $match: {
           ...matchQuery,
         },
       },
@@ -282,6 +282,7 @@ const getProductsByAdmin = async (request, response) => {
           averageRating: 1,
           vendor: 1,
           shop: 1,
+          createdAt: 1,
         },
       },
     ]);
@@ -299,8 +300,8 @@ const getProductsByAdmin = async (request, response) => {
 };
 const createProductByAdmin = async (req, res) => {
   try {
-    const admin = await getAdmin(req, res)
-    
+    const admin = await getAdmin(req, res);
+
     const { images, ...body } = req.body;
 
     const updatedImages = await Promise.all(
@@ -310,7 +311,7 @@ const createProductByAdmin = async (req, res) => {
       })
     );
     const data = await Product.create({
-      vendor:admin._id,
+      vendor: admin._id,
       ...body,
       images: updatedImages,
       likes: 0,
@@ -389,7 +390,7 @@ const updateProductByAdmin = async (req, res) => {
     );
 
     const updated = await Product.findOneAndUpdate(
-      { slug: slug,vendor:vendor._id },
+      { slug: slug, vendor: vendor._id },
       {
         ...body,
         images: updatedImages,
@@ -597,6 +598,7 @@ const relatedProducts = async (req, res) => {
           averageRating: 1,
           vendor: 1,
           shop: 1,
+          createdAt: 1,
         },
       },
     ]);
@@ -609,15 +611,15 @@ const relatedProducts = async (req, res) => {
 const getOneProductBySlug = async (req, res) => {
   try {
     const slug = req.params.slug;
-    const products = await Product.findOne({ slug:slug });
+    const products = await Product.findOne({ slug: slug });
     res.status(200).json({
       success: true,
-      message:products
-    })
-  }catch (error) {
+      message: products,
+    });
+  } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
-}
+};
 module.exports = {
   getProducts,
   getFilters,

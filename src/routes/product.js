@@ -3,7 +3,6 @@ const router = express.Router();
 const product = require('../controllers/product');
 const vendor_product = require('../controllers/vendor-product');
 
-
 // Import verifyToken function
 const verifyToken = require('../config/jwt');
 
@@ -20,10 +19,22 @@ router.delete(
   product.deletedProductByAdmin
 );
 //Vendor routes
-router.post('/vendor/products', verifyToken, vendor_product.createProductByVendor);
+router.post(
+  '/vendor/products',
+  verifyToken,
+  vendor_product.createProductByVendor
+);
 router.get('/vendor/products', verifyToken, vendor_product.getProductsByVendor);
-router.get('/vendor/products/:slug', verifyToken, vendor_product.getOneProductVendor);
-router.put('/vendor/products/:slug', verifyToken, vendor_product.updateProductByVendor);
+router.get(
+  '/vendor/products/:slug',
+  verifyToken,
+  vendor_product.getOneProductVendor
+);
+router.put(
+  '/vendor/products/:slug',
+  verifyToken,
+  vendor_product.updateProductByVendor
+);
 
 router.delete(
   '/vendor/products/:slug',

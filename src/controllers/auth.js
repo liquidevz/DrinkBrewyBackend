@@ -162,6 +162,7 @@ const loginUser = async (req, res) => {
           averageRating: 1,
           vendor: 1,
           shop: 1,
+          createdAt: 1,
         },
       },
     ]);
