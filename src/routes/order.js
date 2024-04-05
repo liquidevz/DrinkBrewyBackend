@@ -8,12 +8,13 @@ router.post('/orders', orderRoutes.createOrder);
 router.get('/orders/:id', orderRoutes.getOrderById);
 
 //admin routes
-router.get('/admin/orders', verifyToken, orderRoutes.getOrderByAdmin);
+router.get('/admin/orders', verifyToken, orderRoutes.getOrdersByAdmin);
 router.get('/admin/orders/:id', verifyToken, orderRoutes.getOneOrderByAdmin);
 router.put('/admin/orders/:id', verifyToken, orderRoutes.updateOrderByAdmin);
 router.delete('/admin/orders/:id', verifyToken, orderRoutes.deleteOrderByAdmin);
 
 //vendor routes
 router.get('/vendor/orders', verifyToken, orderRoutes.getOrdersByVendor);
+
 
 module.exports = router;

@@ -378,7 +378,7 @@ const getOneProductByAdmin = async (req, res) => {
 };
 const updateProductByAdmin = async (req, res) => {
   try {
-    const vendor = await getVendor(req, res);
+    const admin = await getAdmin(req, res);
     const { slug } = req.params;
     const { images, ...body } = req.body;
 
@@ -390,7 +390,7 @@ const updateProductByAdmin = async (req, res) => {
     );
 
     const updated = await Product.findOneAndUpdate(
-      { slug: slug, vendor: vendor._id },
+      { slug: slug, vendor: admin._id },
       {
         ...body,
         images: updatedImages,
