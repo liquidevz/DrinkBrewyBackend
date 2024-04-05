@@ -260,32 +260,45 @@ const deleteOneShopByVendor = async (req, res) => {
 };
 
 //User apis
-// };
 const getAllShops = async (req, res) => {
   try {
     let { page, limit } = req.query;
     page = parseInt(page) || 1; // default page to 1 if not provided
-    limit = parseInt(limit) || 8; // default limit to 8 if not provided
+    limit = parseInt(limit) || null; // default limit to null if not provided
 
-    const startIndex = (page - 1) * limit;
-    const endIndex = page * limit;
+    let shopsQuery = Shop.find();
 
-    const totalShops = await Shop.countDocuments();
-    const totalPages = Math.ceil(totalShops / limit);
+    // Apply pagination only if limit is provided
+    if (limit) {
+      const startIndex = (page - 1) * limit;
+      const endIndex = page * limit;
 
-    const shops = await Shop.find().limit(limit).skip(startIndex);
+      const totalShops = await Shop.countDocuments();
+      const totalPages = Math.ceil(totalShops / limit);
 
-    const pagination = {
-      currentPage: page,
-      totalPages: totalPages,
-      totalShops: totalShops
-    };
+      shopsQuery = shopsQuery.limit(limit).skip(startIndex);
 
-    return res.status(200).json({
-      success: true,
-      data: shops,
-      pagination: pagination
-    });
+      const pagination = {
+        currentPage: page,
+        totalPages: totalPages,
+        totalShops: totalShops
+      };
+
+      const shops = await shopsQuery.exec();
+
+      return res.status(200).json({
+        success: true,
+        data: shops,
+        pagination: pagination
+      });
+    } else {
+      const shops = await shopsQuery.exec();
+
+      return res.status(200).json({
+        success: true,
+        data: shops
+      });
+    }
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });
   }
