@@ -39,11 +39,11 @@ const createShopByAdmin = async (req, res) => {
       ...others,
       logo: {
         ...logo,
-        logoBlurDataURL,
+        blurDataURL: logoBlurDataURL,
       },
       cover: {
         ...cover,
-        coverBlurDataURL,
+        blurDataURL:coverBlurDataURL,
       },
       status: 'active',
     });
@@ -90,11 +90,11 @@ const updateOneShopByAdmin = async (req, res) => {
         ...others,
         logo: {
           ...logo,
-          logoBlurDataURL
+          blurDataURL: logoBlurDataURL
         },
          cover: {
           ...cover,
-          coverBlurDataURL
+          blurDataURL:coverBlurDataURL
         }
       },
       {
@@ -167,11 +167,11 @@ const createShopByVendor = async (req, res) => {
       ...others,
       logo: {
         ...logo,
-        logoBlurDataURL,
+        blurDataURL: logoBlurDataURL,
       },
       cover: {
         ...cover,
-        coverBlurDataURL,
+        blurDataURL:  coverBlurDataURL,
       },
       status: 'pending',
     });
@@ -218,11 +218,11 @@ const updateOneShopByVendor = async (req, res) => {
         ...others,
         logo: {
           ...logo,
-          logoBlurDataURL
+          blurDataURL: logoBlurDataURL
         },
          cover: {
           ...cover,
-          coverBlurDataURL
+          blurDataURL: coverBlurDataURL
         },
          status: 'pending',
       },
