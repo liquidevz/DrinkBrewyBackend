@@ -260,19 +260,37 @@ const deleteOneShopByVendor = async (req, res) => {
 };
 
 //User apis
-
+// };
 const getAllShops = async (req, res) => {
   try {
-    const shops = await Shop.find();
+    let { page, limit } = req.query;
+    page = parseInt(page) || 1; // default page to 1 if not provided
+    limit = parseInt(limit) || 8; // default limit to 8 if not provided
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const totalShops = await Shop.countDocuments();
+    const totalPages = Math.ceil(totalShops / limit);
+
+    const shops = await Shop.find().limit(limit).skip(startIndex);
+
+    const pagination = {
+      currentPage: page,
+      totalPages: totalPages,
+      totalShops: totalShops
+    };
 
     return res.status(200).json({
       success: true,
-      data:shops,
+      data: shops,
+      pagination: pagination
     });
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });
   }
 };
+
 const getOneShopByUser = async (req, res) => {
   try {
     const { sid } = req.params;
