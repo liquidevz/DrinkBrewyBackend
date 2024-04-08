@@ -90,11 +90,11 @@ const updateOneShopByAdmin = async (req, res) => {
         ...others,
         logo: {
           ...logo,
-          logoBlurDataURL,
+          blurDataURL: logoBlurDataURL,
         },
         cover: {
           ...cover,
-          coverBlurDataURL,
+          blurDataURL: coverBlurDataURL,
         },
       },
       {
@@ -263,19 +263,50 @@ const deleteOneShopByVendor = async (req, res) => {
 }
 
 //User apis
-
 const getAllShops = async (req, res) => {
   try {
-    const shops = await Shop.find()
+    let { page, limit } = req.query
+    page = parseInt(page) || 1 // default page to 1 if not provided
+    limit = parseInt(limit) || null // default limit to null if not provided
 
-    return res.status(200).json({
-      success: true,
-      data: shops,
-    })
+    let shopsQuery = Shop.find()
+
+    // Apply pagination only if limit is provided
+    if (limit) {
+      const startIndex = (page - 1) * limit
+      const endIndex = page * limit
+
+      const totalShops = await Shop.countDocuments()
+      const totalPages = Math.ceil(totalShops / limit)
+
+      shopsQuery = shopsQuery.limit(limit).skip(startIndex)
+
+      const pagination = {
+        currentPage: page,
+        totalPages: totalPages,
+        totalShops: totalShops,
+      }
+
+      const shops = await shopsQuery.exec()
+
+      return res.status(200).json({
+        success: true,
+        data: shops,
+        pagination: pagination,
+      })
+    } else {
+      const shops = await shopsQuery.exec()
+
+      return res.status(200).json({
+        success: true,
+        data: shops,
+      })
+    }
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message })
   }
 }
+
 const getOneShopByUser = async (req, res) => {
   try {
     const { sid } = req.params
