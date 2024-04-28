@@ -610,11 +610,48 @@ const relatedProducts = async (req, res) => {
 };
 const getOneProductBySlug = async (req, res) => {
   try {
-    const slug = req.params.slug;
-    const products = await Product.findOne({ slug: slug });
-    res.status(200).json({
+    const product = await Product.findOne({ slug: req.params.slug });
+    const category = await Category.findById(product.category).select([
+      'name',
+      'slug',
+    ]);
+    const brand = await Brand.findById(product.brand).select('name');
+
+    if (!product) {
+      notFound();
+    }
+    const getProductRatingAndReviews = () => {
+      return Product.aggregate([
+        {
+          $match: { slug: req.params.slug },
+        },
+        {
+          $lookup: {
+            from: 'reviews',
+            localField: '_id',
+            foreignField: 'product',
+            as: 'reviews',
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            name: 1,
+            rating: { $avg: '$reviews.rating' },
+            totalReviews: { $size: '$reviews' },
+          },
+        },
+      ]);
+    };
+
+    const reviewReport = await getProductRatingAndReviews();
+    return res.status(201).json({
       success: true,
-      message: products,
+      data: product,
+      totalRating: reviewReport[0]?.rating,
+      totalReviews: reviewReport[0]?.totalReviews,
+      brand: brand,
+      category: category,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
