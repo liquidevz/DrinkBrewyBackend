@@ -64,14 +64,14 @@ const registerUser = async (req, res) => {
     let transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: process.env.RECEIVING_EMAIL, // Your Gmail email
+        user: process.env.EMAIL, // Your Gmail email
         pass: process.env.EMAIL_PASSWORD, // Your Gmail password
       },
     });
 
     // Email options
     let mailOptions = {
-      from: process.env.RECEIVING_EMAIL, // Your Gmail email
+      from: process.env.EMAIL, // Your Gmail email
       to: user.email, // User's email
       subject: 'Verify your email',
       html: htmlContent, // HTML content with OTP and user email
@@ -156,6 +156,7 @@ const loginUser = async (req, res) => {
           slug: 1,
           colors: 1,
           discount: 1,
+          available: 1,
           likes: 1,
           priceSale: 1,
           price: 1,
@@ -234,14 +235,14 @@ const forgetPassword = async (req, res) => {
     let transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: process.env.RECEIVING_EMAIL, // Your Gmail email
+        user: process.env.EMAIL, // Your Gmail email
         pass: process.env.EMAIL_PASSWORD, // Your Gmail password
       },
     });
 
     // Email options
     let mailOptions = {
-      from: process.env.RECEIVING_EMAIL, // Your Gmail email
+      from: process.env.EMAIL, // Your Gmail email
       to: user.email, // User's email
       subject: 'Verify your email',
       html: htmlContent, // HTML content with OTP and user email
@@ -322,9 +323,7 @@ const verifyOtp = async (req, res) => {
     const { email, otp } = await req.body;
 
     // Find the user with the provided email
-    const user = await User.findOne({ email })
-      .maxTimeMS(30000)
-      .exec();
+    const user = await User.findOne({ email }).maxTimeMS(30000).exec();
 
     if (!user) {
       return res
@@ -362,9 +361,7 @@ const resendOtp = async (req, res) => {
     const { email } = await req.body;
 
     // Find the user with the provided email
-    const user = await User.findOne({ email })
-      .maxTimeMS(30000)
-      .exec();
+    const user = await User.findOne({ email }).maxTimeMS(30000).exec();
 
     if (!user) {
       return res
@@ -408,14 +405,14 @@ const resendOtp = async (req, res) => {
     let transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: process.env.RECEIVING_EMAIL, // Your Gmail email
+        user: process.env.EMAIL, // Your Gmail email
         pass: process.env.EMAIL_PASSWORD, // Your Gmail password
       },
     });
 
     // Email options
     let mailOptions = {
-      from: process.env.RECEIVING_EMAIL, // Your Gmail email
+      from: process.env.EMAIL, // Your Gmail email
       to: user.email, // User's email
       subject: 'Verify your email',
       html: htmlContent, // HTML content with OTP and user email

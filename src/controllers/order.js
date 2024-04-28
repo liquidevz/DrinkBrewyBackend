@@ -3,7 +3,7 @@ const Products = require('../models/Product');
 const Orders = require('../models/Order');
 const Coupons = require('../models/CouponCode');
 const User = require('../models/User');
-const Shop=require('../models/Shop')
+const Shop = require('../models/Shop');
 const nodemailer = require('nodemailer');
 const fs = require('fs');
 const path = require('path');
@@ -159,13 +159,13 @@ const createOrder = async (req, res) => {
     let transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: process.env.RECEIVING_EMAIL,
+        user: process.env.EMAIL,
         pass: process.env.EMAIL_PASSWORD,
       },
     });
 
     let mailOptions = {
-      from: process.env.RECEIVING_EMAIL,
+      from: process.env.EMAIL,
       to: user.email,
       subject: 'Your Order Confirmation',
       html: htmlContent,
@@ -209,7 +209,7 @@ const getOrdersByAdmin = async (req, res) => {
       page: pageQuery,
       limit: limitQuery,
       search: searchQuery,
-      shopId
+      shopId,
     } = req.query;
 
     const limit = parseInt(limitQuery) || 10;
@@ -224,25 +224,20 @@ const getOrdersByAdmin = async (req, res) => {
       matchQuery['items.shop'] = shop._id;
     }
 
-
-
     const totalOrders = await Orders.countDocuments({
       $or: [
         { 'user.firstName': { $regex: searchQuery || '', $options: 'i' } },
         { 'user.lastName': { $regex: searchQuery || '', $options: 'i' } },
       ],
-      ...matchQuery
+      ...matchQuery,
     });
-
 
     const orders = await Orders.aggregate([
       { $match: { ...matchQuery } },
       { $sort: { createdAt: -1 } },
       { $skip: skip },
-      { $limit: limit }
+      { $limit: limit },
     ]);
-
-    
 
     return res.status(200).json({
       success: true,
@@ -255,7 +250,6 @@ const getOrdersByAdmin = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
-
 
 const getOneOrderByAdmin = async (req, res) => {
   try {
@@ -372,7 +366,8 @@ const getOrdersByVendor = async (req, res) => {
       },
     ]);
     // Access the count from the first element of the result array
-    const count = totalOrderCount.length > 0 ? totalOrderCount[0].totalOrderCount : 0;
+    const count =
+      totalOrderCount.length > 0 ? totalOrderCount[0].totalOrderCount : 0;
 
     const orders = await Orders.aggregate([
       ...pipeline,

@@ -131,6 +131,7 @@ const getProducts = async (req, res) => {
           price: 1,
           averageRating: 1,
           vendor: 1,
+          available: 1,
           shop: 1,
           createdAt: 1,
         },
@@ -266,6 +267,7 @@ const getProductsByAdmin = async (request, response) => {
       {
         $addFields: {
           averageRating: { $avg: '$reviews.rating' },
+          image: { $arrayElemAt: ['$images', 0] },
         },
       },
 
@@ -277,6 +279,7 @@ const getProductsByAdmin = async (request, response) => {
           colors: 1,
           discount: 1,
           likes: 1,
+          available: 1,
           priceSale: 1,
           price: 1,
           averageRating: 1,
@@ -591,6 +594,7 @@ const relatedProducts = async (req, res) => {
           name: 1,
           slug: 1,
           colors: 1,
+          available: 1,
           discount: 1,
           likes: 1,
           priceSale: 1,

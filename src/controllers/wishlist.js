@@ -38,6 +38,7 @@ const getWishlist = async (req, res) => {
           priceSale: 1,
           price: 1,
           averageRating: 1,
+          available: 1,
           vendor: 1,
           shop: 1,
           createdAt: 1,

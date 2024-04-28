@@ -95,7 +95,7 @@ const UserSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['super admin', 'admin', 'user', 'vendor'],
+      enum: ['super admin', 'admin', 'user'],
       required: true,
     },
   },
@@ -105,7 +105,7 @@ const UserSchema = new mongoose.Schema(
 );
 
 // Hash the password before saving
-UserSchema.pre('save', async function(next) {
+UserSchema.pre('save', async function (next) {
   try {
     if (!this.isModified('password')) {
       return next();
