@@ -295,8 +295,13 @@ const createProductByAdmin = async (req, res) => {
         return { ...image, blurDataURL };
       })
     );
+    
+    // If no shop is provided, create a default ObjectId
+    const defaultShopId = '000000000000000000000000'; // Valid MongoDB ObjectId of all zeros
+    
     const data = await Product.create({
       ...body,
+      shop: body.shop || defaultShopId, // Use provided shop or default
       images: updatedImages,
       likes: 0,
     });
@@ -373,10 +378,19 @@ const updateProductByAdmin = async (req, res) => {
       })
     );
 
+    // If no shop is provided, create a default ObjectId
+    const defaultShopId = '000000000000000000000000'; // Valid MongoDB ObjectId of all zeros
+    
+    // Ensure shop is a valid ObjectId
+    if (body.shop && typeof body.shop === 'string' && !body.shop.match(/^[0-9a-fA-F]{24}$/)) {
+      body.shop = defaultShopId;
+    }
+
     const updated = await Product.findOneAndUpdate(
       { slug: slug },
       {
         ...body,
+        shop: body.shop || defaultShopId, // Use provided shop or default
         images: updatedImages,
       },
       { new: true, runValidators: true }

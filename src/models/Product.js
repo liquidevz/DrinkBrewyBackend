@@ -79,6 +79,8 @@ const productSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Shop',
       required: true,
+      get: v => v.toString(),
+      set: v => mongoose.Types.ObjectId(v && v.toString() === 'undefined' ? '000000000000000000000000' : v),
     },
     images: [
       {

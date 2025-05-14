@@ -7,6 +7,9 @@ const bodyParser = require('body-parser');
 // Load environment variables from .env file
 dotenv.config();
 
+// Import and initialize Shop model
+const Shop = require('./models/Shop');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
