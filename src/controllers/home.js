@@ -59,8 +59,7 @@ const getTopRatedProducts = async (req, res) => {
           priceSale: 1,
           price: 1,
           averageRating: 1,
-          vendor: 1,
-          shop: 1,
+
           createdAt: 1,
         },
       },
@@ -131,8 +130,6 @@ const getBestSellerProducts = async (req, res) => {
           priceSale: 1,
           price: 1,
           averageRating: 1,
-          vendor: 1,
-          shop: 1,
           createdAt: 1,
         },
       },
@@ -179,8 +176,7 @@ const getFeaturedProducts = async (req, res) => {
           priceSale: 1,
           price: 1,
           averageRating: 1,
-          vendor: 1,
-          shop: 1,
+
           createdAt: 1,
         },
       },

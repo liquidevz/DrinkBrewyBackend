@@ -13,8 +13,4 @@ router.get('/admin/orders/:id', verifyToken, orderRoutes.getOneOrderByAdmin);
 router.put('/admin/orders/:id', verifyToken, orderRoutes.updateOrderByAdmin);
 router.delete('/admin/orders/:id', verifyToken, orderRoutes.deleteOrderByAdmin);
 
-//vendor routes
-router.get('/vendor/orders', verifyToken, orderRoutes.getOrdersByVendor);
-
-
 module.exports = router;
